@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chetan Shah – Premium Masalas & Spices</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #1a0a00; }
+    input, textarea, button { font-family: Georgia, serif; }
+    ::-webkit-scrollbar { width: 6px; } 
+    ::-webkit-scrollbar-track { background: #1a0a00; }
+    ::-webkit-scrollbar-thumb { background: #8b4513; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const SPICE_EMOJIS = {
+      "Jeera": "🌿", "Methi": "🍃", "Dhania": "🌱", "Rai": "⚫",
+      "Variyali": "🌾", "Kokam": "🫐", "Ajma": "🌿", "Kali Mirch": "⚫",
+      "Desi Gundh": "🟤", "Taj": "🟤", "Lavang": "🤎", "Oregano": "🌿",
+      "Chilly": "🌶️", "Sesame": "⚪", "Elaichi": "💚", "Tej Patta": "🍂",
+      "Kashmiri": "🌶️", "Reshampatti": "🌶️", "Bedgi": "🌶️", "Turmeric": "🟡",
+      "Haldi": "🟡", "Dhana Jeera": "🟢", "Malavni": "🌶️", "Hing": "🟤",
+      "Garam Masala": "🎭", "Suth": "🟤", "Ganthoda": "🔶", "Amchur": "🟡",
+      "Bedki": "🌶️"
+    };
+
+    const getEmoji = (name) => {
+      for (const [key, emoji] of Object.entries(SPICE_EMOJIS)) {
+        if (name.toLowerCase().includes(key.toLowerCase())) return emoji;
+      }
+      return "🌿";
+    };
+
+    const initialMasalas = [
+      { id: 1, name: "Jeera (Cumin Seeds) A-1 Quality", qty: "1 Kg", price: 400, category: "Masalas" },
+      { id: 2, name: "Jeera (Cumin Seeds) A-2 Quality", qty: "1 Kg", price: 350, category: "Masalas" },
+      { id: 3, name: "Methi Kuria A-1 Quality", qty: "1 Kg", price: null, category: "Masalas" },
+      { id: 4, name: "Dhania Kuria A-1 Quality", qty: "1 Kg", price: null, category: "Masalas" },
+      { id: 5, name: "Rai Kuria A-1 Quality", qty: "1 Kg", price: null, category: "Masalas" },
+      { id: 6, name: "Variyali (Aniseed) A-1 Quality (Green)", qty: "1 Kg", price: 550, category: "Masalas" },
+      { id: 7, name: "Variyali (Aniseed) A-2 Quality", qty: "1 Kg", price: 250, category: "Masalas" },
+      { id: 8, name: "Kokam (Lonavala)", qty: "1 Kg", price: 560, category: "Masalas" },
+      { id: 9, name: "Rai Barik (Black mustard seed)", qty: "1 Kg", price: 160, category: "Masalas" },
+      { id: 10, name: "Rai Jadi (Large) (Black mustard seed)", qty: "1 Kg", price: 130, category: "Masalas" },
+      { id: 11, name: "Ajma (Parsley)", qty: "1 Kg", price: 450, category: "Masalas" },
+      { id: 12, name: "Kali Mirch (Black peppercorn)", qty: "100 gm", price: 130, category: "Masalas" },
+      { id: 13, name: "Desi Gundh", qty: "1 Kg", price: 250, category: "Masalas" },
+      { id: 14, name: "Taj/Dalchini (Cinnamon)", qty: "100 gm", price: 40, category: "Masalas" },
+      { id: 15, name: "Taj/Dalchini (Cinnamon) -Cigarette", qty: "100 gm", price: 70, category: "Masalas" },
+      { id: 16, name: "Lavang (Cloves) (A-1 Quality)", qty: "100 gm", price: 140, category: "Masalas" },
+      { id: 17, name: "Oregano", qty: "250 gm", price: 90, category: "Masalas" },
+      { id: 18, name: "Chilly Flakes", qty: "250 gm", price: 100, category: "Masalas" },
+      { id: 19, name: "Methi", qty: "1 Kg", price: 150, category: "Masalas" },
+      { id: 20, name: "White Sesame(Til) (A-1 Quality)", qty: "1 Kg", price: 280, category: "Masalas" },
+      { id: 21, name: "White Sesame(Til) (A-2 Quality)", qty: "1 Kg", price: 230, category: "Masalas" },
+      { id: 22, name: "Elaichi (Green Cardamom) 8mm", qty: "100 gm", price: 410, category: "Masalas" },
+      { id: 23, name: "Elaichi (Green Cardamom)", qty: "100 gm", price: 340, category: "Masalas" },
+      { id: 24, name: "Tej Patta", qty: "100 gm", price: 30, category: "Masalas" },
+    ];
+
+    const initialPowders = [
+      { id: 101, name: "Kashmiri Mirch (A-1 Quality)", qty: "1 Kg", price: 640, category: "Masala Powders" },
+      { id: 102, name: "Reshampatti (A-1 Quality)", qty: "1 Kg", price: 380, category: "Masala Powders" },
+      { id: 103, name: "Bedgi Chilli Powder", qty: "1 Kg", price: 470, category: "Masala Powders" },
+      { id: 104, name: "Turmeric -Haldi (A-1 Quality) (Salem)", qty: "1 Kg", price: 290, category: "Masala Powders" },
+      { id: 105, name: "Dhana Jeera (A-1 Quality)", qty: "1 Kg", price: 310, category: "Masala Powders" },
+      { id: 106, name: "Dhana Jeera (A-2 Quality)", qty: "1 Kg", price: 250, category: "Masala Powders" },
+      { id: 107, name: "Bedki (Khandala)", qty: "1 Kg", price: 350, category: "Masala Powders" },
+      { id: 108, name: "Bedki Mirch Powder", qty: "1 Kg", price: 290, category: "Masala Powders" },
+      { id: 109, name: "Malavni Mirch", qty: "1 Kg", price: 340, category: "Masala Powders" },
+      { id: 110, name: "Vandevi Hing", qty: "100 GM", price: 110, category: "Masala Powders" },
+      { id: 111, name: "Vandevi Hing (Yellow Hing)", qty: "100 GM", price: 50, category: "Masala Powders" },
+      { id: 112, name: "Garam Masala (A-1 Quality)", qty: "1 Kg", price: 350, category: "Masala Powders" },
+      { id: 113, name: "Garam Masala (A-2 Quality)", qty: "1 Kg", price: 250, category: "Masala Powders" },
+      { id: 114, name: "Suth Powder", qty: "1 Kg", price: 550, category: "Masala Powders" },
+      { id: 115, name: "Ganthoda Powder (A-1 Quality)", qty: "1 Kg", price: 700, category: "Masala Powders" },
+      { id: 116, name: "Amchur Powder (Special)", qty: "1 Kg", price: 340, category: "Masala Powders" },
+    ];
+
+    const UPI_ID = "9323982590@upi";
+    const PHONE = "9323982590";
+    const OWNER = "Chetan Shah";
+
+    function App() {
+      const [view, setView] = useState("shop");
+      const [products, setProducts] = useState([...initialMasalas, ...initialPowders]);
+      const [cart, setCart] = useState([]);
+      const [activeCategory, setActiveCategory] = useState("All");
+      const [search, setSearch] = useState("");
+      const [orderPlaced, setOrderPlaced] = useState(false);
+      const [customerInfo, setCustomerInfo] = useState({ name: "", phone: "", address: "" });
+      const [checkoutStep, setCheckoutStep] = useState(1);
+      const [displayMode, setDisplayMode] = useState("list");
+      const [adminLoggedIn, setAdminLoggedIn] = useState(false);
+      const [adminPass, setAdminPass] = useState("");
+      const [adminError, setAdminError] = useState("");
+      const [editingProduct, setEditingProduct] = useState(null);
+      const [editForm, setEditForm] = useState({});
+      const [adminSearch, setAdminSearch] = useState("");
+      const [paymentMethod, setPaymentMethod] = useState("upi");
+      const [orderRef] = useState(() => "ORD" + Date.now().toString().slice(-6));
+
+      const categories = ["All", "Masalas", "Masala Powders"];
+
+      const filtered = products.filter(p => {
+        const matchCat = activeCategory === "All" || p.category === activeCategory;
+        const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
+        return matchCat && matchSearch;
+      });
+
+      const cartTotal = cart.reduce((sum, item) => sum + (item.price || 0) * item.qty, 0);
+      const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+      const addToCart = (product) => {
+        if (!product.price) return;
+        setCart(prev => {
+          const existing = prev.find(i => i.id === product.id);
+          if (existing) return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + 1 } : i);
+          return [...prev, { ...product, qty: 1 }];
+        });
+      };
+
+      const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id));
+      const updateQty = (id, delta) => {
+        setCart(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(0, i.qty + delta) } : i).filter(i => i.qty > 0));
+      };
+
+      const handleAdminLogin = () => {
+        if (adminPass === "chetan123") { setAdminLoggedIn(true); setAdminError(""); }
+        else setAdminError("Incorrect password.");
+      };
+
+      const startEdit = (product) => {
+        setEditingProduct(product.id);
+        setEditForm({ name: product.name, price: product.price ?? "", qty: product.qty });
+      };
+
+      const saveEdit = () => {
+        setProducts(prev => prev.map(p => p.id === editingProduct
+          ? { ...p, name: editForm.name, price: editForm.price === "" ? null : Number(editForm.price), qty: editForm.qty }
+          : p));
+        setEditingProduct(null);
+      };
+
+      const addProduct = () => {
+        const newId = Math.max(...products.map(p => p.id)) + 1;
+        const newProd = { id: newId, name: "New Product", qty: "1 Kg", price: 0, category: "Masalas" };
+        setProducts(prev => [...prev, newProd]);
+        startEdit(newProd);
+      };
+
+      const deleteProduct = (id) => setProducts(prev => prev.filter(p => p.id !== id));
+
+      const placeOrder = () => {
+        const itemLines = cart.map(item =>
+          `  • ${item.name} (${item.qty}) x${item.qty} = ₹${item.price * item.qty}`
+        ).join("\n");
+        const message =
+          `🌶️ *NEW ORDER — Chetan Shah Masalas*\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `📋 *Order Ref:* ${orderRef}\n\n` +
+          `👤 *Customer Details*\n` +
+          `  Name: ${customerInfo.name}\n` +
+          `  Phone: ${customerInfo.phone}\n` +
+          `  Address: ${customerInfo.address}\n\n` +
+          `🛒 *Items Ordered*\n${itemLines}\n\n` +
+          `💰 *Total: ₹${cartTotal}*\n` +
+          `💳 Payment: ${paymentMethod === "upi" ? "UPI (online)" : "Cash on Delivery"}\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `Please confirm & arrange delivery 🚚`;
+        const whatsappURL = `https://wa.me/91${PHONE}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappURL, "_blank");
+        setOrderPlaced(true);
+        setCart([]);
+        setCheckoutStep(1);
+      };
+
+      const adminFiltered = products.filter(p => p.name.toLowerCase().includes(adminSearch.toLowerCase()));
+
+      // ── ADMIN ──────────────────────────────────────────────
+      if (view === "admin") {
+        return (
+          <div style={{ minHeight:"100vh", background:"linear-gradient(135deg,#1a0a00,#2d1500,#1a0800)", fontFamily:"Georgia,serif", color:"#fff" }}>
+            <div style={{ background:"rgba(255,140,0,0.15)", borderBottom:"2px solid #ff8c00", padding:"12px 24px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <span style={{ fontSize:28 }}>🧂</span>
+                <div>
+                  <div style={{ fontWeight:"bold", fontSize:18, color:"#ffb347" }}>Admin Panel — {OWNER}</div>
+                  <div style={{ fontSize:12, color:"#ff8c00" }}>Manage Products & Prices</div>
+                </div>
+              </div>
+              <div style={{ display:"flex", gap:10 }}>
+                {adminLoggedIn && <button onClick={addProduct} style={{ background:"linear-gradient(135deg,#ff8c00,#ff6b00)", border:"none", borderRadius:8, color:"#fff", padding:"8px 16px", cursor:"pointer", fontWeight:"bold", fontSize:14 }}>+ Add Product</button>}
+                <button onClick={() => { setView("shop"); setAdminLoggedIn(false); setAdminPass(""); }} style={{ background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.3)", borderRadius:8, color:"#fff", padding:"8px 16px", cursor:"pointer", fontSize:14 }}>← Back to Shop</button>
+              </div>
+            </div>
+            <div style={{ maxWidth:900, margin:"0 auto", padding:"30px 16px" }}>
+              {!adminLoggedIn ? (
+                <div style={{ maxWidth:400, margin:"80px auto", background:"rgba(255,140,0,0.1)", border:"1px solid rgba(255,140,0,0.4)", borderRadius:16, padding:40, textAlign:"center" }}>
+                  <div style={{ fontSize:60, marginBottom:16 }}>🔐</div>
+                  <h2 style={{ color:"#ffb347", marginBottom:24, fontSize:22 }}>Admin Login</h2>
+                  <input type="password" placeholder="Enter admin password" value={adminPass} onChange={e => setAdminPass(e.target.value)} onKeyDown={e => e.key==="Enter" && handleAdminLogin()}
+                    style={{ width:"100%", padding:"12px 16px", borderRadius:8, border:"1px solid rgba(255,140,0,0.5)", background:"rgba(0,0,0,0.4)", color:"#fff", fontSize:16, marginBottom:12 }} />
+                  {adminError && <div style={{ color:"#ff6b6b", fontSize:13, marginBottom:12 }}>{adminError}</div>}
+                  <button onClick={handleAdminLogin} style={{ width:"100%", background:"linear-gradient(135deg,#ff8c00,#ff6b00)", border:"none", borderRadius:8, color:"#fff", padding:"12px", cursor:"pointer", fontSize:16, fontWeight:"bold" }}>Login</button>
+                  <div style={{ marginTop:16, fontSize:12, color:"#888" }}>Password: chetan123</div>
+                </div>
+              ) : (
+                <>
+                  <input placeholder="🔍 Search products..." value={adminSearch} onChange={e => setAdminSearch(e.target.value)}
+                    style={{ width:"100%", padding:"12px 16px", borderRadius:10, border:"1px solid rgba(255,140,0,0.4)", background:"rgba(0,0,0,0.3)", color:"#fff", fontSize:15, marginBottom:20 }} />
+                  {["Masalas","Masala Powders"].map(cat => {
+                    const catProducts = adminFiltered.filter(p => p.category === cat);
+                    if (catProducts.length === 0) return null;
+                    return (
+                      <div key={cat} style={{ marginBottom:32 }}>
+                        <h3 style={{ color:"#ffb347", borderBottom:"1px solid rgba(255,140,0,0.3)", paddingBottom:8, marginBottom:16, fontSize:18 }}>
+                          {cat === "Masalas" ? "🌿" : "🌶️"} {cat}
+                        </h3>
+                        {catProducts.map(p => (
+                          <div key={p.id} style={{ background:"rgba(255,140,0,0.08)", border:"1px solid rgba(255,140,0,0.2)", borderRadius:10, padding:"12px 16px", marginBottom:10, display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+                            {editingProduct === p.id ? (
+                              <>
+                                <input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name:e.target.value }))} style={{ flex:2, minWidth:180, padding:"6px 10px", borderRadius:6, border:"1px solid #ff8c00", background:"rgba(0,0,0,0.5)", color:"#fff", fontSize:14 }} />
+                                <input value={editForm.qty} onChange={e => setEditForm(f => ({ ...f, qty:e.target.value }))} placeholder="Qty" style={{ width:90, padding:"6px 10px", borderRadius:6, border:"1px solid #ff8c00", background:"rgba(0,0,0,0.5)", color:"#fff", fontSize:14 }} />
+                                <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+                                  <span style={{ color:"#ff8c00" }}>₹</span>
+                                  <input type="number" value={editForm.price} onChange={e => setEditForm(f => ({ ...f, price:e.target.value }))} placeholder="Price" style={{ width:80, padding:"6px 10px", borderRadius:6, border:"1px solid #ff8c00", background:"rgba(0,0,0,0.5)", color:"#fff", fontSize:14 }} />
+                                </div>
+                                <button onClick={saveEdit} style={{ background:"#22c55e", border:"none", borderRadius:6, color:"#fff", padding:"6px 14px", cursor:"pointer", fontWeight:"bold" }}>Save</button>
+                                <button onClick={() => setEditingProduct(null)} style={{ background:"rgba(255,255,255,0.1)", border:"none", borderRadius:6, color:"#fff", padding:"6px 14px", cursor:"pointer" }}>Cancel</button>
+                              </>
+                            ) : (
+                              <>
+                                <span style={{ fontSize:20 }}>{getEmoji(p.name)}</span>
+                                <span style={{ flex:2, minWidth:150, fontSize:14, color:"#ffe4b5" }}>{p.name}</span>
+                                <span style={{ color:"#aaa", fontSize:13 }}>{p.qty}</span>
+                                <span style={{ color:"#ffb347", fontWeight:"bold", minWidth:70 }}>{p.price ? `₹${p.price}` : "—"}</span>
+                                <button onClick={() => startEdit(p)} style={{ background:"rgba(255,140,0,0.2)", border:"1px solid #ff8c00", borderRadius:6, color:"#ffb347", padding:"5px 12px", cursor:"pointer", fontSize:13 }}>✏️ Edit</button>
+                                <button onClick={() => deleteProduct(p.id)} style={{ background:"rgba(255,50,50,0.15)", border:"1px solid rgba(255,50,50,0.4)", borderRadius:6, color:"#ff6b6b", padding:"5px 12px", cursor:"pointer", fontSize:13 }}>🗑️</button>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // ── ORDER PLACED ───────────────────────────────────────
+      if (orderPlaced) {
+        return (
+          <div style={{ minHeight:"100vh", background:"linear-gradient(135deg,#0d1a00,#1a2e00,#0d1a00)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Georgia,serif", color:"#fff", padding:20 }}>
+            <div style={{ textAlign:"center", maxWidth:480, background:"rgba(255,255,255,0.05)", border:"1px solid rgba(100,200,100,0.3)", borderRadius:20, padding:40 }}>
+              <div style={{ fontSize:70, marginBottom:16 }}>🎉</div>
+              <h2 style={{ color:"#7fff00", fontSize:26, marginBottom:8 }}>Order Placed Successfully!</h2>
+              <div style={{ color:"#aaa", marginBottom:24, fontSize:14 }}>Order Ref: <strong style={{ color:"#7fff00" }}>{orderRef}</strong></div>
+              <div style={{ background:"rgba(100,200,100,0.1)", border:"1px solid rgba(100,200,100,0.3)", borderRadius:12, padding:20, marginBottom:24, textAlign:"left" }}>
+                <div style={{ color:"#7fff00", fontWeight:"bold", marginBottom:12 }}>✅ What's next?</div>
+                <div style={{ color:"#ccc", fontSize:14, lineHeight:1.8 }}>
+                  📞 You will receive a confirmation call from <strong style={{ color:"#fff" }}>Chetan Shah</strong> at <strong style={{ color:"#fff" }}>+91 {PHONE}</strong><br/>
+                  🚚 <strong style={{ color:"#fff" }}>Free Home Delivery</strong> will be arranged<br/>
+                  💰 Payment via UPI: <strong style={{ color:"#fff" }}>{UPI_ID}</strong>
+                </div>
+              </div>
+              <button onClick={() => { setOrderPlaced(false); setView("shop"); }} style={{ background:"linear-gradient(135deg,#ff8c00,#ff6b00)", border:"none", borderRadius:10, color:"#fff", padding:"12px 32px", cursor:"pointer", fontSize:16, fontWeight:"bold" }}>Continue Shopping</button>
+            </div>
+          </div>
+        );
+      }
+
+      // ── CHECKOUT ───────────────────────────────────────────
+      if (view === "checkout") {
+        return (
+          <div style={{ minHeight:"100vh", background:"linear-gradient(135deg,#1a0a00,#2d1500,#1a0800)", fontFamily:"Georgia,serif", color:"#fff", padding:"20px 16px" }}>
+            <div style={{ maxWidth:560, margin:"0 auto" }}>
+              <button onClick={() => setView("shop")} style={{ background:"none", border:"none", color:"#ff8c00", cursor:"pointer", fontSize:16, marginBottom:20, padding:0 }}>← Back to Shop</button>
+              <h2 style={{ color:"#ffb347", fontSize:24, marginBottom:24 }}>🛒 Your Order</h2>
+              <div style={{ display:"flex", gap:0, marginBottom:28 }}>
+                {[{n:1,label:"Review"},{n:2,label:"Details"},{n:3,label:"Payment"}].map(({n,label}) => (
+                  <div key={n} style={{ flex:1, textAlign:"center" }}>
+                    <div style={{ height:4, background:checkoutStep>=n?"#ff8c00":"rgba(255,255,255,0.15)", marginBottom:4 }} />
+                    <div style={{ fontSize:12, color:checkoutStep>=n?"#ffb347":"#555" }}>{label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {checkoutStep === 1 && (
+                <div>
+                  {cart.map(item => (
+                    <div key={item.id} style={{ display:"flex", alignItems:"center", gap:12, background:"rgba(255,140,0,0.08)", border:"1px solid rgba(255,140,0,0.2)", borderRadius:10, padding:"10px 14px", marginBottom:10 }}>
+                      <span style={{ fontSize:24 }}>{getEmoji(item.name)}</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:13, color:"#ffe4b5", marginBottom:2 }}>{item.name}</div>
+                        <div style={{ fontSize:12, color:"#aaa" }}>{item.qty} × ₹{item.price}</div>
+                      </div>
+                      <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                        <button onClick={() => updateQty(item.id,-1)} style={{ width:28,height:28,borderRadius:"50%",border:"1px solid #ff8c00",background:"none",color:"#ff8c00",cursor:"pointer",fontSize:16,lineHeight:1 }}>−</button>
+                        <span style={{ minWidth:20,textAlign:"center" }}>{item.qty}</span>
+                        <button onClick={() => updateQty(item.id,1)} style={{ width:28,height:28,borderRadius:"50%",border:"1px solid #ff8c00",background:"rgba(255,140,0,0.2)",color:"#ff8c00",cursor:"pointer",fontSize:16,lineHeight:1 }}>+</button>
+                      </div>
+                      <div style={{ minWidth:64,textAlign:"right",color:"#ffb347",fontWeight:"bold" }}>₹{item.price*item.qty}</div>
+                      <button onClick={() => removeFromCart(item.id)} style={{ background:"none",border:"none",color:"#ff6b6b",cursor:"pointer",fontSize:18 }}>×</button>
+                    </div>
+                  ))}
+                  <div style={{ background:"rgba(255,140,0,0.12)",border:"1px solid rgba(255,140,0,0.4)",borderRadius:10,padding:"14px 18px",marginTop:16,display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+                    <span style={{ fontSize:15 }}>Total (incl. Free Delivery 🚚)</span>
+                    <span style={{ fontSize:22,fontWeight:"bold",color:"#ffb347" }}>₹{cartTotal}</span>
+                  </div>
+                  <button onClick={() => setCheckoutStep(2)} disabled={cart.length===0} style={{ width:"100%",marginTop:20,background:"linear-gradient(135deg,#ff8c00,#ff6b00)",border:"none",borderRadius:10,color:"#fff",padding:"14px",cursor:"pointer",fontSize:16,fontWeight:"bold",opacity:cart.length===0?0.5:1 }}>Continue →</button>
+                </div>
+              )}
+
+              {checkoutStep === 2 && (
+                <div>
+                  <h3 style={{ color:"#ffb347",marginBottom:18 }}>📋 Delivery Details</h3>
+                  {["name","phone","address"].map(field => (
+                    <div key={field} style={{ marginBottom:14 }}>
+                      <label style={{ fontSize:13,color:"#aaa",display:"block",marginBottom:5 }}>{field==="phone"?"Phone Number":field.charAt(0).toUpperCase()+field.slice(1)}</label>
+                      {field==="address"
+                        ? <textarea rows={3} value={customerInfo[field]} onChange={e => setCustomerInfo(p=>({...p,[field]:e.target.value}))} placeholder="Your delivery address" style={{ width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid rgba(255,140,0,0.4)",background:"rgba(0,0,0,0.4)",color:"#fff",fontSize:14,resize:"none" }} />
+                        : <input type={field==="phone"?"tel":"text"} value={customerInfo[field]} onChange={e => setCustomerInfo(p=>({...p,[field]:e.target.value}))} placeholder={`Your ${field}`} style={{ width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid rgba(255,140,0,0.4)",background:"rgba(0,0,0,0.4)",color:"#fff",fontSize:14 }} />
+                      }
+                    </div>
+                  ))}
+                  <div style={{ display:"flex",gap:10,marginTop:8 }}>
+                    <button onClick={() => setCheckoutStep(1)} style={{ flex:1,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:10,color:"#fff",padding:"12px",cursor:"pointer",fontSize:15 }}>← Back</button>
+                    <button onClick={() => setCheckoutStep(3)} disabled={!customerInfo.name||!customerInfo.phone||!customerInfo.address} style={{ flex:2,background:"linear-gradient(135deg,#ff8c00,#ff6b00)",border:"none",borderRadius:10,color:"#fff",padding:"12px",cursor:"pointer",fontSize:15,fontWeight:"bold",opacity:(!customerInfo.name||!customerInfo.phone||!customerInfo.address)?0.5:1 }}>Continue →</button>
+                  </div>
+                </div>
+              )}
+
+              {checkoutStep === 3 && (
+                <div>
+                  <h3 style={{ color:"#ffb347",marginBottom:18 }}>💳 Payment</h3>
+                  <div style={{ display:"flex",gap:10,marginBottom:20 }}>
+                    {["upi","cash"].map(method => (
+                      <button key={method} onClick={() => setPaymentMethod(method)} style={{ flex:1,padding:"12px",borderRadius:10,border:`2px solid ${paymentMethod===method?"#ff8c00":"rgba(255,255,255,0.15)"}`,background:paymentMethod===method?"rgba(255,140,0,0.15)":"rgba(0,0,0,0.3)",color:paymentMethod===method?"#ffb347":"#888",cursor:"pointer",fontSize:15 }}>
+                        {method==="upi"?"📱 UPI":"💵 Cash on Delivery"}
+                      </button>
+                    ))}
+                  </div>
+                  {paymentMethod==="upi" && (
+                    <div style={{ background:"rgba(255,140,0,0.08)",border:"1px solid rgba(255,140,0,0.3)",borderRadius:12,padding:20,marginBottom:16,textAlign:"center" }}>
+                      <div style={{ fontSize:48,marginBottom:10 }}>📲</div>
+                      <div style={{ fontSize:13,color:"#aaa",marginBottom:6 }}>Pay via UPI to:</div>
+                      <div style={{ fontSize:18,fontWeight:"bold",color:"#ffb347",letterSpacing:1 }}>{UPI_ID}</div>
+                      <div style={{ fontSize:13,color:"#aaa",marginTop:8 }}>Amount: <strong style={{ color:"#fff" }}>₹{cartTotal}</strong></div>
+                      <div style={{ marginTop:12,fontSize:12,color:"#666" }}>Google Pay · PhonePe · Paytm · Any UPI app</div>
+                    </div>
+                  )}
+                  {paymentMethod==="cash" && (
+                    <div style={{ background:"rgba(100,200,100,0.08)",border:"1px solid rgba(100,200,100,0.3)",borderRadius:12,padding:20,marginBottom:16,textAlign:"center" }}>
+                      <div style={{ fontSize:48,marginBottom:10 }}>🚚</div>
+                      <div style={{ color:"#7fff00",fontWeight:"bold",marginBottom:6 }}>Free Home Delivery!</div>
+                      <div style={{ fontSize:13,color:"#ccc" }}>Pay ₹{cartTotal} in cash when your order arrives</div>
+                    </div>
+                  )}
+                  <div style={{ background:"rgba(255,140,0,0.08)",border:"1px solid rgba(255,140,0,0.2)",borderRadius:10,padding:"10px 14px",marginBottom:20,fontSize:13,color:"#aaa" }}>
+                    <div><strong style={{ color:"#ffe4b5" }}>Delivering to:</strong> {customerInfo.name}</div>
+                    <div>{customerInfo.address}</div>
+                    <div>📞 {customerInfo.phone}</div>
+                  </div>
+                  <div style={{ display:"flex",gap:10 }}>
+                    <button onClick={() => setCheckoutStep(2)} style={{ flex:1,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:10,color:"#fff",padding:"12px",cursor:"pointer",fontSize:15 }}>← Back</button>
+                    <button onClick={placeOrder} style={{ flex:2,background:"linear-gradient(135deg,#22c55e,#16a34a)",border:"none",borderRadius:10,color:"#fff",padding:"12px",cursor:"pointer",fontSize:15,fontWeight:"bold" }}>✅ Place Order</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // ── MAIN SHOP ──────────────────────────────────────────
+      const AddButton = ({ product }) => {
+        const inCart = cart.find(i => i.id === product.id);
+        if (!product.price) return <a href={`tel:${PHONE}`} style={{ background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:8,color:"#ccc",padding:"5px 10px",fontSize:12,textDecoration:"none",whiteSpace:"nowrap" }}>📞 Call</a>;
+        if (inCart) return (
+          <div style={{ display:"flex",alignItems:"center",gap:6 }}>
+            <button onClick={() => updateQty(product.id,-1)} style={{ width:26,height:26,borderRadius:"50%",border:"1px solid #ff8c00",background:"none",color:"#ff8c00",cursor:"pointer",fontSize:15,lineHeight:1 }}>−</button>
+            <span style={{ fontSize:14,minWidth:16,textAlign:"center" }}>{inCart.qty}</span>
+            <button onClick={() => addToCart(product)} style={{ width:26,height:26,borderRadius:"50%",border:"none",background:"#ff8c00",color:"#fff",cursor:"pointer",fontSize:15,lineHeight:1 }}>+</button>
+          </div>
+        );
+        return <button onClick={() => addToCart(product)} style={{ background:"linear-gradient(135deg,#ff8c00,#ff6b00)",border:"none",borderRadius:8,color:"#fff",padding:"6px 14px",cursor:"pointer",fontSize:13,fontWeight:"bold",whiteSpace:"nowrap" }}>+ Add</button>;
+      };
+
+      const catsToShow = activeCategory === "All" ? ["Masalas","Masala Powders"] : [activeCategory];
+
+      return (
+        <div style={{ minHeight:"100vh", background:"linear-gradient(135deg,#1a0a00,#2d1500 40%,#1a0500 100%)", fontFamily:"Georgia,serif", color:"#fff" }}>
+          {/* Header */}
+          <div style={{ background:"linear-gradient(135deg,rgba(139,69,19,0.4),rgba(205,133,63,0.2))", borderBottom:"2px solid rgba(205,133,63,0.5)", padding:"16px 20px" }}>
+            <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <div style={{ fontSize:42 }}>🌶️</div>
+                <div>
+                  <h1 style={{ margin:0, fontSize:24, fontWeight:"bold", background:"linear-gradient(90deg,#ffb347,#ff8c00)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Chetan Shah</h1>
+                  <div style={{ fontSize:12, color:"#cd853f", letterSpacing:2 }}>PREMIUM MASALAS & SPICES</div>
+                  <div style={{ fontSize:11, color:"#888", marginTop:2 }}>🚚 Free Home Delivery · 📞 {PHONE}</div>
+                </div>
+              </div>
+              <div style={{ display:"flex", gap:10, alignItems:"center" }}>
+                <button onClick={() => setView("checkout")} style={{ background:cartCount>0?"linear-gradient(135deg,#ff8c00,#ff6b00)":"rgba(255,140,0,0.15)", border:"1px solid rgba(255,140,0,0.5)", borderRadius:10, color:"#fff", padding:"10px 18px", cursor:"pointer", fontSize:15, fontWeight:"bold" }}>
+                  🛒 {cartCount>0?`Cart (${cartCount}) · ₹${cartTotal}`:"Cart"}
+                </button>
+                <button onClick={() => setView("admin")} style={{ background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.2)", borderRadius:10, color:"#ccc", padding:"10px 16px", cursor:"pointer", fontSize:14 }}>⚙️ Admin</button>
+              </div>
+            </div>
+          </div>
+
+          {/* Banner */}
+          <div style={{ background:"linear-gradient(90deg,rgba(205,133,63,0.15),rgba(255,140,0,0.08),rgba(205,133,63,0.15))", borderBottom:"1px solid rgba(255,140,0,0.2)", padding:"8px 20px", textAlign:"center", fontSize:13, color:"#cd853f" }}>
+            ✨ Premium quality guaranteed &nbsp;·&nbsp; 🚚 Free home delivery on all orders &nbsp;·&nbsp; 📞 Call {PHONE} for bulk orders
+          </div>
+
+          <div style={{ maxWidth:1100, margin:"0 auto", padding:"24px 16px" }}>
+            {/* Search + View Toggle */}
+            <div style={{ display:"flex", gap:10, marginBottom:16, flexWrap:"wrap", alignItems:"center" }}>
+              <input placeholder="🔍 Search masalas & spices..." value={search} onChange={e => setSearch(e.target.value)}
+                style={{ flex:1, minWidth:180, padding:"10px 16px", borderRadius:10, border:"1px solid rgba(205,133,63,0.4)", background:"rgba(0,0,0,0.4)", color:"#fff", fontSize:15 }} />
+              <div style={{ display:"flex", border:"1px solid rgba(205,133,63,0.4)", borderRadius:10, overflow:"hidden" }}>
+                <button onClick={() => setDisplayMode("list")} title="List View" style={{ padding:"9px 14px", background:displayMode==="list"?"rgba(255,140,0,0.3)":"rgba(0,0,0,0.3)", border:"none", color:displayMode==="list"?"#ffb347":"#666", cursor:"pointer", fontSize:16 }}>☰</button>
+                <button onClick={() => setDisplayMode("icon")} title="Icon View" style={{ padding:"9px 14px", background:displayMode==="icon"?"rgba(255,140,0,0.3)":"rgba(0,0,0,0.3)", border:"none", color:displayMode==="icon"?"#ffb347":"#666", cursor:"pointer", fontSize:16, borderLeft:"1px solid rgba(205,133,63,0.3)" }}>⊞</button>
+              </div>
+            </div>
+
+            {/* Category Tabs */}
+            <div style={{ display:"flex", gap:8, marginBottom:24, flexWrap:"wrap" }}>
+              {categories.map(cat => (
+                <button key={cat} onClick={() => setActiveCategory(cat)} style={{ padding:"8px 18px", borderRadius:20, border:`1px solid ${activeCategory===cat?"#ff8c00":"rgba(205,133,63,0.3)"}`, background:activeCategory===cat?"rgba(255,140,0,0.25)":"rgba(0,0,0,0.3)", color:activeCategory===cat?"#ffb347":"#888", cursor:"pointer", fontSize:13, fontWeight:activeCategory===cat?"bold":"normal" }}>
+                  {cat==="Masalas"?"🌿 ":cat==="Masala Powders"?"🌶️ ":"🧂 "}{cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Products */}
+            {catsToShow.map(cat => {
+              const catProducts = filtered.filter(p => p.category === cat);
+              if (catProducts.length === 0) return null;
+              return (
+                <div key={cat} style={{ marginBottom:36 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:14 }}>
+                    <div style={{ height:2, flex:1, background:"linear-gradient(90deg,rgba(205,133,63,0.6),transparent)" }} />
+                    <h2 style={{ margin:0, fontSize:18, color:"#cd853f", whiteSpace:"nowrap" }}>{cat==="Masalas"?"🌿":"🌶️"} {cat} <span style={{ fontSize:13,color:"#666",fontWeight:"normal" }}>({catProducts.length})</span></h2>
+                    <div style={{ height:2, flex:1, background:"linear-gradient(90deg,transparent,rgba(205,133,63,0.6))" }} />
+                  </div>
+
+                  {displayMode==="list" && (
+                    <div style={{ border:"1px solid rgba(205,133,63,0.2)", borderRadius:12, overflow:"hidden" }}>
+                      {catProducts.map((product,idx) => (
+                        <div key={product.id} style={{ display:"flex", alignItems:"center", gap:14, padding:"11px 16px", background:cart.find(i=>i.id===product.id)?"rgba(255,140,0,0.08)":idx%2===0?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.15)", borderBottom:idx<catProducts.length-1?"1px solid rgba(205,133,63,0.12)":"none" }}>
+                          <span style={{ fontSize:12,color:"#555",minWidth:22,textAlign:"right" }}>{idx+1}</span>
+                          <span style={{ fontSize:22,minWidth:28,textAlign:"center" }}>{getEmoji(product.name)}</span>
+                          <span style={{ flex:1,fontSize:14,color:"#ffe4b5",lineHeight:1.4 }}>{product.name}</span>
+                          <span style={{ fontSize:12,color:"#777",minWidth:56,textAlign:"center" }}>{product.qty}</span>
+                          <span style={{ fontSize:16,fontWeight:"bold",color:product.price?"#ffb347":"#555",minWidth:64,textAlign:"right" }}>{product.price?`₹${product.price}`:"—"}</span>
+                          <div style={{ minWidth:90,display:"flex",justifyContent:"flex-end" }}><AddButton product={product} /></div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {displayMode==="icon" && (
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))", gap:14 }}>
+                      {catProducts.map((product,idx) => {
+                        const inCart = cart.find(i=>i.id===product.id);
+                        const bg = ["#7c3500,#c85000","#5a3d00,#9c6800","#0d3d1a,#1a7a35","#5a0000,#a00000","#4a2800,#8a5000","#003d30,#007060","#4a2000,#8a4000","#3d0020,#7a0040"][idx%8];
+                        return (
+                          <div key={product.id} style={{ borderRadius:14,overflow:"hidden",background:"rgba(255,255,255,0.04)",border:`1px solid ${inCart?"#ff8c00":"rgba(205,133,63,0.25)"}`,boxShadow:inCart?"0 0 0 1px #ff8c00":"none" }}>
+                            <div style={{ height:90,background:`linear-gradient(135deg,${bg})`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative" }}>
+                              <span style={{ fontSize:44 }}>{getEmoji(product.name)}</span>
+                              {inCart && <div style={{ position:"absolute",top:7,right:7,background:"#ff8c00",borderRadius:"50%",width:20,height:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:"bold" }}>{inCart.qty}</div>}
+                            </div>
+                            <div style={{ padding:"10px 12px 12px" }}>
+                              <div style={{ fontSize:12,color:"#ffe4b5",lineHeight:1.4,marginBottom:4,minHeight:34 }}>{product.name}</div>
+                              <div style={{ fontSize:11,color:"#777",marginBottom:8 }}>{product.qty}</div>
+                              <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+                                <span style={{ fontSize:16,fontWeight:"bold",color:product.price?"#ffb347":"#555" }}>{product.price?`₹${product.price}`:"—"}</span>
+                                <AddButton product={product} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {filtered.length===0 && (
+              <div style={{ textAlign:"center",padding:"60px 20px",color:"#555" }}>
+                <div style={{ fontSize:48,marginBottom:12 }}>🔍</div>
+                <div style={{ fontSize:16 }}>No products found for "{search}"</div>
+              </div>
+            )}
+          </div>
+
+          {/* Sticky Cart */}
+          {cartCount > 0 && (
+            <div style={{ position:"fixed",bottom:20,left:"50%",transform:"translateX(-50%)",zIndex:100 }}>
+              <button onClick={() => setView("checkout")} style={{ background:"linear-gradient(135deg,#ff8c00,#ff6b00)",border:"none",borderRadius:30,color:"#fff",padding:"14px 32px",cursor:"pointer",fontSize:16,fontWeight:"bold",boxShadow:"0 8px 30px rgba(255,107,0,0.6)",whiteSpace:"nowrap" }}>
+                🛒 View Cart ({cartCount} items) · ₹{cartTotal}
+              </button>
+            </div>
+          )}
+
+          {/* Footer */}
+          <div style={{ borderTop:"1px solid rgba(205,133,63,0.2)",padding:"20px",textAlign:"center",color:"#555",fontSize:13,marginTop:20 }}>
+            <strong style={{ color:"#cd853f" }}>Chetan Shah</strong> · 📞 {PHONE} · Free Home Delivery on all orders
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
