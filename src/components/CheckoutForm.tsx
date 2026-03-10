@@ -24,7 +24,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 }) => {
     const [step, setStep] = useState(1);
     const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({ name: "", phone: "", address: "" });
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("upi");
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
     const orderRef = useState(() => "ORD" + Date.now().toString().slice(-6))[0];
 
     const placeOrder = () => {
@@ -173,7 +173,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                                 <span className="text-[9px] text-zinc-600 uppercase tracking-[0.2em] font-extrabold block mb-3">Scan to Pay securely</span>
                                 <div className="bg-white p-2 rounded-xl mb-4 shadow-xl">
                                     <img
-                                        src="/qr.png"
+                                        src="/qr.jpg"
                                         alt="UPI QR Code"
                                         className="w-32 h-32 object-contain"
                                     />
