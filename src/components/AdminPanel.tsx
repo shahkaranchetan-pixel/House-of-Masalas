@@ -23,6 +23,23 @@ export const AdminPanel = (props: AdminPanelProps) => {
     const [editForm, setEditForm] = useState<Partial<Product>>({});
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState<"inventory" | "reports">("inventory");
+    const [prevProductsLength, setPrevProductsLength] = useState(products.length);
+
+    React.useEffect(() => {
+        if (products.length > prevProductsLength) {
+            const firstProd = products[0];
+            if (firstProd && firstProd.name === "New Product") {
+                setEditingId(firstProd.id);
+                setEditForm(firstProd);
+            }
+        }
+        setPrevProductsLength(products.length);
+    }, [products.length]);
+
+    const handleAddClick = () => {
+        setSearch("");
+        onAddProduct();
+    };
 
     const handleLogin = () => {
         if (password === APP_CONFIG.ADMIN_PASSWORD) {
@@ -129,7 +146,7 @@ export const AdminPanel = (props: AdminPanelProps) => {
                 </div>
                 <div className="flex gap-2">
                     {activeTab === "inventory" ? (
-                        <button onClick={onAddProduct} className="bg-primary hover:bg-primary-hover text-black px-4 py-2 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-md active:scale-95">+ Add Spice</button>
+                        <button onClick={handleAddClick} className="bg-primary hover:bg-primary-hover text-black px-4 py-2 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-md active:scale-95">+ Add Spice</button>
                     ) : (
                         <button
                             onClick={downloadCSV}

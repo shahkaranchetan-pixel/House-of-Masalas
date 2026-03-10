@@ -85,7 +85,7 @@ export default function MasalaApp() {
     const addProduct = () => {
         const newId = Math.max(...products.map(p => p.id), 0) + 1;
         const newProd: Product = { id: newId, name: "New Product", qty: "1 Kg", price: 0, category: "Masalas" };
-        setProducts(prev => [...prev, newProd]);
+        setProducts(prev => [newProd, ...prev]);
     };
 
     const updateProduct = (updated: Product) => {
