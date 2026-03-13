@@ -1,29 +1,47 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Product, Order } from '../types';
+import { Product, Order, Promotion } from '../types';
 import { getSpiceEmoji } from '../utils/emoji';
 import { APP_CONFIG } from '../constants/products';
 
 interface AdminPanelProps {
     products: Product[];
     orders: Order[];
+    promotions: Promotion[];
     onAddProduct: () => void;
     onUpdateProduct: (product: Product) => void;
     onDeleteProduct: (id: number) => void;
+    onAddPromotion: () => void;
+    onUpdatePromotion: (promotion: Promotion) => void;
+    onDeletePromotion: (id: number) => void;
     onBack: () => void;
 }
 
 export const AdminPanel = (props: AdminPanelProps) => {
-    const { products, orders: allOrders = [], onAddProduct, onUpdateProduct, onDeleteProduct, onBack } = props;
+    const { 
+        products, 
+        orders: allOrders = [], 
+        promotions = [],
+        onAddProduct, 
+        onUpdateProduct, 
+        onDeleteProduct, 
+        onAddPromotion,
+        onUpdatePromotion,
+        onDeletePromotion,
+        onBack 
+    } = props;
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editForm, setEditForm] = useState<Partial<Product>>({});
+    const [editingPromoId, setEditingPromoId] = useState<number | null>(null);
+    const [editPromoForm, setEditPromoForm] = useState<Partial<Promotion>>({});
     const [search, setSearch] = useState("");
-    const [activeTab, setActiveTab] = useState<"inventory" | "reports">("inventory");
+    const [activeTab, setActiveTab] = useState<"inventory" | "reports" | "promotions">("inventory");
     const [prevProductsLength, setPrevProductsLength] = useState(products.length);
+    const [prevPromosLength, setPrevPromosLength] = useState(promotions.length);
 
     React.useEffect(() => {
         if (products.length > prevProductsLength) {
@@ -36,9 +54,24 @@ export const AdminPanel = (props: AdminPanelProps) => {
         setPrevProductsLength(products.length);
     }, [products.length]);
 
+    React.useEffect(() => {
+        if (promotions.length > prevPromosLength) {
+            const firstPromo = promotions[0];
+            if (firstPromo && (firstPromo.text === "New Promotion" || firstPromo.text === "")) {
+                setEditingPromoId(firstPromo.id);
+                setEditPromoForm(firstPromo);
+            }
+        }
+        setPrevPromosLength(promotions.length);
+    }, [promotions.length]);
+
     const handleAddClick = () => {
-        setSearch("");
-        onAddProduct();
+        if (activeTab === "inventory") {
+            setSearch("");
+            onAddProduct();
+        } else if (activeTab === "promotions") {
+            onAddPromotion();
+        }
     };
 
     const handleLogin = () => {
@@ -85,10 +118,21 @@ export const AdminPanel = (props: AdminPanelProps) => {
         }
     };
 
+    const startPromoEdit = (promo: Promotion) => {
+        setEditingPromoId(promo.id);
+        setEditPromoForm(promo);
+    };
+
+    const savePromoEdit = () => {
+        if (editingPromoId && editPromoForm.text !== undefined) {
+            onUpdatePromotion(editPromoForm as Promotion);
+            setEditingPromoId(null);
+        }
+    };
+
     const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
 
     if (!isLoggedIn) {
-        // ... login render same ...
         return (
             <div className="min-h-[70vh] flex items-center justify-center px-4">
                 <div className="max-w-md w-full glass-panel rounded-3xl p-12 text-center premium-shadow border-primary/20 animate-in zoom-in duration-500">
@@ -132,7 +176,7 @@ export const AdminPanel = (props: AdminPanelProps) => {
                         <span className="opacity-30 text-base">#</span> Management Center
                     </h2>
                     <div className="flex gap-4 mt-2">
-                        {([["inventory", "Inventory"], ["reports", "Order Reports"]] as const).map(([id, label]) => (
+                        {([["inventory", "Inventory"], ["promotions", "Promotions"], ["reports", "Order Reports"]] as const).map(([id, label]) => (
                             <button
                                 key={id}
                                 onClick={() => setActiveTab(id)}
@@ -145,9 +189,13 @@ export const AdminPanel = (props: AdminPanelProps) => {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    {activeTab === "inventory" ? (
+                    {activeTab === "inventory" && (
                         <button onClick={handleAddClick} className="bg-primary hover:bg-primary-hover text-black px-4 py-2 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-md active:scale-95">+ Add Spice</button>
-                    ) : (
+                    )}
+                    {activeTab === "promotions" && (
+                        <button onClick={handleAddClick} className="bg-primary hover:bg-primary-hover text-black px-4 py-2 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-md active:scale-95">+ Add Promo</button>
+                    )}
+                    {activeTab === "reports" && (
                         <button
                             onClick={downloadCSV}
                             disabled={allOrders.length === 0}
@@ -160,7 +208,7 @@ export const AdminPanel = (props: AdminPanelProps) => {
                 </div>
             </div>
 
-            {activeTab === "inventory" ? (
+            {activeTab === "inventory" && (
                 <>
                     <div className="relative mb-8">
                         <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-600">
@@ -228,7 +276,65 @@ export const AdminPanel = (props: AdminPanelProps) => {
                         })}
                     </div>
                 </>
-            ) : (
+            )}
+
+            {activeTab === "promotions" && (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="space-y-3">
+                        {promotions.length === 0 ? (
+                            <div className="text-center py-20 bg-zinc-900/40 rounded-3xl gold-border">
+                                <div className="text-4xl mb-4 opacity-20">✨</div>
+                                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">No promotions added yet</p>
+                            </div>
+                        ) : (
+                            promotions.map(promo => (
+                                <div key={promo.id} className="p-4 rounded-xl bg-surface/50 gold-border flex items-center gap-4 transition-colors">
+                                    {editingPromoId === promo.id ? (
+                                        <div className="flex-1 flex gap-3 items-center animate-in zoom-in duration-200">
+                                            <input 
+                                                value={editPromoForm.text} 
+                                                onChange={e => setEditPromoForm(f => ({ ...f, text: e.target.value }))} 
+                                                placeholder="Promotion text..."
+                                                className="flex-1 bg-zinc-900 text-white px-4 py-2 rounded-lg text-sm border-primary/30 focus:border-primary outline-none border transition-all" 
+                                            />
+                                            <div className="flex gap-2">
+                                                <button onClick={savePromoEdit} className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors uppercase tracking-wider">Save</button>
+                                                <button onClick={() => setEditingPromoId(null)} className="text-zinc-500 hover:text-white px-3 py-2 text-xs font-bold uppercase tracking-wider">Cancel</button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="flex-1">
+                                                <div className="text-sm font-medium text-white">{promo.text}</div>
+                                                <div className={`text-[10px] mt-1 font-bold uppercase tracking-widest ${promo.isActive ? "text-emerald-500" : "text-zinc-600"}`}>
+                                                    {promo.isActive ? "● Active" : "○ Inactive"}
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <button 
+                                                    onClick={() => onUpdatePromotion({ ...promo, isActive: !promo.isActive })}
+                                                    className={`p-2 rounded-lg transition-all ${promo.isActive ? "text-emerald-500 hover:bg-emerald-500/10" : "text-zinc-600 hover:text-white"}`}
+                                                    title={promo.isActive ? "Deactivate" : "Activate"}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+                                                </button>
+                                                <button onClick={() => startPromoEdit(promo)} className="p-2 text-zinc-600 hover:text-primary transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
+                                                </button>
+                                                <button onClick={() => onDeletePromotion(promo.id)} className="p-2 text-zinc-800 hover:text-red-500 transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {activeTab === "reports" && (
                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 overflow-x-auto">
                     {allOrders.length === 0 ? (
                         <div className="text-center py-20 bg-zinc-900/40 rounded-3xl gold-border">

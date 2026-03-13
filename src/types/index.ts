@@ -28,3 +28,9 @@ export interface Order {
     total: number;
     paymentMethod: PaymentMethod;
 }
+
+export interface Promotion {
+    id: number;
+    text: string;
+    isActive: boolean;
+}

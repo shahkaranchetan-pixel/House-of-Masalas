@@ -7,7 +7,7 @@ import { CheckoutForm } from '../components/CheckoutForm';
 import { AdminPanel } from '../components/AdminPanel';
 import { OrderSuccess } from '../components/OrderSuccess';
 import { INITIAL_PRODUCTS, APP_CONFIG } from '../constants/products';
-import { Product, CartItem, DisplayMode, ViewState, Order, CustomerInfo, PaymentMethod } from '../types';
+import { Product, CartItem, DisplayMode, ViewState, Order, CustomerInfo, PaymentMethod, Promotion } from '../types';
 
 export default function MasalaApp() {
     const [view, setView] = useState<ViewState>("shop");
@@ -24,11 +24,23 @@ export default function MasalaApp() {
     const [search, setSearch] = useState<string>("");
     const [displayMode, setDisplayMode] = useState<DisplayMode>("list");
     const [orderPlacedRef, setOrderPlacedRef] = useState<string | null>(null);
+    const [promotions, setPromotions] = useState<Promotion[]>(() => {
+        if (typeof window !== "undefined") {
+            const saved = localStorage.getItem("masala_promotions");
+            return saved ? JSON.parse(saved) : [];
+        }
+        return [];
+    });
 
     // Persist orders to localStorage
     React.useEffect(() => {
         localStorage.setItem("masala_orders", JSON.stringify(orders));
     }, [orders]);
+
+    // Persist promotions to localStorage
+    React.useEffect(() => {
+        localStorage.setItem("masala_promotions", JSON.stringify(promotions));
+    }, [promotions]);
 
     const filteredProducts = useMemo(() => {
         return products.filter(p => {
@@ -96,6 +108,20 @@ export default function MasalaApp() {
         setProducts(prev => prev.filter(p => p.id !== id));
     };
 
+    const addPromotion = () => {
+        const newId = Math.max(...promotions.map(p => p.id), 0) + 1;
+        const newPromo: Promotion = { id: newId, text: "New Promotion", isActive: true };
+        setPromotions(prev => [newPromo, ...prev]);
+    };
+
+    const updatePromotion = (updated: Promotion) => {
+        setPromotions(prev => prev.map(p => p.id === updated.id ? updated : p));
+    };
+
+    const deletePromotion = (id: number) => {
+        setPromotions(prev => prev.filter(p => p.id !== id));
+    };
+
     const handleContinue = () => {
         setOrderPlacedRef(null);
         setView("shop");
@@ -119,6 +145,24 @@ export default function MasalaApp() {
             <main className="flex-1">
                 {view === "shop" && (
                     <div className="max-w-6xl mx-auto px-4 mt-4 sm:mt-6">
+                        {/* Promotions Banner */}
+                        {promotions.filter(p => p.isActive).length > 0 && (
+                            <div className="mb-6 overflow-hidden bg-primary/10 border border-primary/20 rounded-2xl py-3 px-4">
+                                <div className="flex gap-8 animate-marquee whitespace-nowrap">
+                                    {promotions.filter(p => p.isActive).map(p => (
+                                        <span key={p.id} className="text-primary font-bold text-sm tracking-wide flex items-center gap-2">
+                                            <span className="text-lg">✨</span> {p.text}
+                                        </span>
+                                    ))}
+                                    {/* Duplicate for seamless loop */}
+                                    {promotions.filter(p => p.isActive).map(p => (
+                                        <span key={`dup-${p.id}`} className="text-primary font-bold text-sm tracking-wide flex items-center gap-2">
+                                            <span className="text-lg">✨</span> {p.text}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         {/* Search + View Toggle */}
                         <div className="flex gap-2.5 mb-5 items-center bg-surface/30 p-1.5 rounded-xl gold-border shadow-inner">
                             <div className="relative flex-1">
@@ -199,9 +243,13 @@ export default function MasalaApp() {
                     <AdminPanel
                         products={products}
                         orders={orders}
+                        promotions={promotions}
                         onAddProduct={addProduct}
                         onUpdateProduct={updateProduct}
                         onDeleteProduct={deleteProduct}
+                        onAddPromotion={addPromotion}
+                        onUpdatePromotion={updatePromotion}
+                        onDeletePromotion={deletePromotion}
                         onBack={() => setView("shop")}
                     />
                 )}
@@ -210,7 +258,7 @@ export default function MasalaApp() {
             <footer className="border-t border-white/5 py-12 mt-12 bg-zinc-950/50">
                 <div className="max-w-6xl mx-auto px-4 text-center">
                     <h4 className="text-gold text-lg mb-2 font-serif">{APP_CONFIG.OWNER}</h4>
-                    <p className="text-xs text-zinc-500 uppercase tracking-widest mb-6 font-medium">Estate Grown & Curated Spices</p>
+                    <p className="text-xs text-zinc-500 uppercase tracking-widest mb-6 font-medium">House of Masala - Curated Spieces Hub</p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 text-xs text-zinc-600 font-medium italic">
                         <span>Free Home Delivery</span>
                         <span className="hidden sm:inline opacity-20">•</span>

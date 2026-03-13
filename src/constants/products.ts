@@ -46,7 +46,7 @@ export const INITIAL_PRODUCTS: Product[] = [
 export const APP_CONFIG = {
     UPI_ID: "belachetanshah1@okhdfcbank",
     PHONE: "9323982590",
-    OWNER: "Chetan Shah",
+    OWNER: "House of Masalas",
     ADMIN_PASSWORD: "cs123"
 };
 
