@@ -11,7 +11,13 @@ import { Product, CartItem, DisplayMode, ViewState, Order, CustomerInfo, Payment
 
 export default function MasalaApp() {
     const [view, setView] = useState<ViewState>("shop");
-    const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+    const [products, setProducts] = useState<Product[]>(() => {
+        if (typeof window !== "undefined") {
+            const saved = localStorage.getItem("masala_products");
+            return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+        }
+        return INITIAL_PRODUCTS;
+    });
     const [cart, setCart] = useState<CartItem[]>([]);
     const [orders, setOrders] = useState<Order[]>(() => {
         if (typeof window !== "undefined") {
@@ -41,6 +47,11 @@ export default function MasalaApp() {
     React.useEffect(() => {
         localStorage.setItem("masala_promotions", JSON.stringify(promotions));
     }, [promotions]);
+
+    // Persist products to localStorage
+    React.useEffect(() => {
+        localStorage.setItem("masala_products", JSON.stringify(products));
+    }, [products]);
 
     const filteredProducts = useMemo(() => {
         return products.filter(p => {
