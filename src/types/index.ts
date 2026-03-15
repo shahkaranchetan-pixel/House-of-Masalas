@@ -26,11 +26,29 @@ export interface Order {
     customer: CustomerInfo;
     items: CartItem[];
     total: number;
+    originalTotal: number;
+    discountAmount: number;
+    appliedPromoCode: string | null;
     paymentMethod: PaymentMethod;
 }
+
+export type PromotionType = "percentage" | "fixed";
+export type PromotionScope = "all" | "category";
 
 export interface Promotion {
     id: number;
     text: string;
+    code: string;
     isActive: boolean;
+    type: PromotionType;
+    value: number;
+    scope: PromotionScope;
+    targetCategory?: string;
+    minOrderValue?: number;
 }
+
+export interface PromotionWithCalc extends Promotion {
+    calculatedDiscount: number;
+    amountNeeded: number;
+}
+

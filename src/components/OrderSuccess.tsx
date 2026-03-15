@@ -10,33 +10,43 @@ interface OrderSuccessProps {
 
 export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderRef, onContinue }) => {
     return (
-        <div className="min-h-[80vh] flex items-center justify-center p-6">
-            <div className="max-w-md w-full glass-panel rounded-3xl p-10 text-center premium-shadow border-emerald-500/20 animate-in zoom-in duration-700">
-                <div className="relative mb-8">
-                    <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full" />
-                    <div className="text-7xl relative z-10 animate-bounce">📦</div>
+        <div className="min-h-[90vh] flex items-center justify-center p-6">
+            <div className="max-w-lg w-full glass-card rounded-[3rem] p-12 text-center animate-in zoom-in slide-in-from-bottom-12 duration-1000 relative overflow-hidden">
+                <div className="absolute inset-0 shimmer-bg opacity-10" />
+                
+                <div className="relative mb-10 w-24 h-24 mx-auto">
+                    <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
+                    <div className="w-full h-full bg-zinc-900 rounded-[2rem] border border-white/5 flex items-center justify-center text-5xl relative z-10 shadow-2xl">
+                        ✨
+                    </div>
                 </div>
 
-                <h2 className="text-3xl text-white font-serif mb-2 italic">Exquisite Choice</h2>
-                <div className="text-zinc-500 text-[10px] uppercase tracking-[0.3em] font-bold mb-8">Order Confirmed</div>
+                <div className="space-y-3 mb-10">
+                    <div className="flex items-center justify-center gap-3">
+                        <span className="h-[1px] w-6 bg-primary/30" />
+                        <span className="text-[10px] text-primary font-black uppercase tracking-[0.4em]">Acquisition Successful</span>
+                        <span className="h-[1px] w-6 bg-primary/30" />
+                    </div>
+                    <h2 className="text-4xl text-white font-serif italic">Exquisite Selection</h2>
+                </div>
 
-                <div className="bg-zinc-900 border border-emerald-500/10 rounded-2xl p-6 mb-10 text-left">
-                    <div className="flex justify-between items-center mb-6">
-                        <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Ref No.</span>
-                        <span className="text-emerald-400 font-serif font-bold text-lg">{orderRef}</span>
+                <div className="bg-zinc-950/80 border border-white/5 rounded-[2rem] p-8 mb-12 text-left relative group">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-black">Archive Ref.</span>
+                        <span className="text-luxury-gold font-mono font-bold text-lg tracking-widest">{orderRef}</span>
                     </div>
 
-                    <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                            <div className="w-5 h-5 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center text-[10px] shrink-0">✓</div>
+                    <div className="space-y-6">
+                        <div className="flex items-start gap-4">
+                            <div className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] shrink-0 font-black border border-primary/20">I</div>
                             <p className="text-xs text-zinc-400 leading-relaxed font-medium">
-                                <strong className="text-zinc-200">Chetan Shah</strong> will contact you shortly to confirm delivery schedules.
+                                <strong className="text-white">Herald of Flavor:</strong> {APP_CONFIG.OWNER} will initiate formal communication shortly to coordinate dispatch.
                             </p>
                         </div>
-                        <div className="flex items-start gap-3">
-                            <div className="w-5 h-5 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center text-[10px] shrink-0">✓</div>
+                        <div className="flex items-start gap-4">
+                            <div className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] shrink-0 font-black border border-primary/20">II</div>
                             <p className="text-xs text-zinc-400 leading-relaxed font-medium">
-                                Payment details have been shared via the WhatsApp message.
+                                Your digital credentials and settlement details have been transmitted via secure messenger.
                             </p>
                         </div>
                     </div>
@@ -44,13 +54,13 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderRef, onContinue
 
                 <button
                     onClick={onContinue}
-                    className="w-full bg-primary hover:bg-primary-hover text-black py-4 rounded-xl font-bold transition-all shadow-lg active:scale-95"
+                    className="w-full btn-primary-luxury py-5"
                 >
-                    Explore More Spices
+                    Return to the Sensory Gallery
                 </button>
 
-                <div className="mt-8 text-[9px] text-zinc-600 uppercase tracking-widest">
-                    Your journey of flavor has begun.
+                <div className="mt-10 text-[9px] text-zinc-700 uppercase tracking-[0.5em] font-black">
+                    A Legacy of Spices Awaits Your Arrival
                 </div>
             </div>
         </div>
