@@ -90,16 +90,16 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/5 transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                 </div>
-                Return to Collection
+                Back to Shop
             </button>
 
             <div className="flex flex-col mb-12">
                 <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-primary/40" />
-                    <span className="text-xs text-primary font-black uppercase tracking-[0.4em]">Checkout Process</span>
+                    <span className="text-xs text-primary font-black uppercase tracking-[0.4em]">Checkout</span>
                 </div>
                 <h2 className="text-4xl text-white font-serif italic">
-                    Finalize <span className="text-primary/30 not-italic font-sans">Acquisition</span>
+                    Place Your <span className="text-primary/30 not-italic font-sans">Order</span>
                 </h2>
             </div>
 
@@ -110,7 +110,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         <div className={`h-1.5 rounded-full mb-3 transition-all duration-1000 ${step >= n ? "bg-primary shadow-[0_0_15px_var(--primary-glow)]" : "bg-zinc-800"}`} />
                         <div className="flex items-center gap-2">
                             <span className={`text-xs font-black font-mono ${step >= n ? "text-primary" : "text-zinc-700"}`}>0{n}</span>
-                            <span className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black ${step >= n ? "text-white" : "text-zinc-700"}`}>{label}</span>
+                            <span className={`text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black ${step >= n ? "text-white" : "text-zinc-700"}`}>{label === "Review" ? "Review Items" : label}</span>
                         </div>
                     </div>
                 ))}
@@ -120,16 +120,16 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-10">
                     {/* Cart Items */}
                     <div className="space-y-6">
-                        <label className="text-[11px] sm:text-xs text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Curated Items</label>
+                        <label className="text-[11px] sm:text-xs text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Selected Items</label>
                         <div className="space-y-4">
                             {cart.map(item => (
                                 <div key={item.id} className="group flex items-center gap-5 p-4 sm:p-5 rounded-3xl glass-card reveal-scale">
-                                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shrink-0 group-hover:rotate-12 transition-transform">
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-zinc-900 rounded-2xl flex items-center justify-center text-xl sm:text-2xl shrink-0 group-hover:rotate-12 transition-transform">
                                         {getSpiceEmoji(item.name)}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">{item.name}</div>
-                                        <div className="text-xs text-primary font-black uppercase tracking-widest">{item.qty} Parcel</div>
+                                        <div className="text-xs text-primary font-black uppercase tracking-widest">{item.qty} Packet</div>
                                     </div>
                                     <div className="flex flex-col items-end gap-3">
                                         <div className="flex items-center bg-zinc-950 p-1.5 rounded-xl border border-white/5">
@@ -147,7 +147,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         {/* Coupon Section */}
                         <div className="space-y-5">
-                            <label className="text-[11px] sm:text-xs text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Privilege Code</label>
+                            <label className="text-[11px] sm:text-xs text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Promo Code</label>
 
                             {/* Manual Entry */}
                             <div className="relative group">
@@ -158,7 +158,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                                         setPromoError("");
                                         setPromoSuccess("");
                                     }}
-                                    placeholder="ENTER CODE"
+                                    placeholder="Enter Code"
                                     className="input-premium font-mono tracking-widest text-base py-5"
                                 />
                                 <button
@@ -176,7 +176,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                                     }}
                                     className="absolute right-2 top-2 bottom-2 bg-primary hover:bg-primary-hover text-black font-black text-xs px-6 rounded-xl uppercase tracking-[0.2em] transition-all"
                                 >
-                                    Verify
+                                    Apply
                                 </button>
                             </div>
                             {promoError && <p className="text-amber-400 text-[11px] font-black uppercase tracking-wider ml-2 animate-pulse">{promoError}</p>}
@@ -280,7 +280,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
                         {/* Invoice Summary */}
                         <div className="space-y-5">
-                            <label className="text-[11px] sm:text-xs text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Summary</label>
+                            <label className="text-[11px] sm:text-xs text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Order Summary</label>
                             <div className="glass-card rounded-[2.5rem] p-8 sm:p-10 space-y-6 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
 
@@ -301,10 +301,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                                 )}
 
                                 <div className="flex flex-col gap-2 pt-4">
-                                    <span className="text-[11px] font-black text-primary/50 uppercase tracking-[0.4em]">Total Payable</span>
+                                    <span className="text-[11px] font-black text-primary/50 uppercase tracking-[0.4em]">Final Total</span>
                                     <div className="flex justify-between items-end">
                                         <span className="text-5xl font-bold text-luxury-gold tracking-tighter font-serif leading-none">₹{cartTotal}</span>
-                                        <span className="text-xs text-zinc-700 font-black uppercase tracking-widest mb-1">INR</span>
+                                        <span className="text-xs text-zinc-700 font-black uppercase tracking-widest mb-1">Payable</span>
                                     </div>
                                 </div>
 
@@ -386,13 +386,24 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
                             {paymentMethod === "upi" ? (
                                 <div className="flex flex-col items-center relative z-10">
-                                    <span className="text-xs text-primary font-black uppercase tracking-[0.4em] mb-6">Secure UPI Gateway</span>
+                                    <span className="text-xs text-primary font-black uppercase tracking-[0.4em] mb-6">Secure UPI Payment</span>
                                     <div className="bg-white p-3 rounded-3xl mb-6 shadow-2xl border-4 border-primary/20">
                                         <img src="/qr.jpg" alt="UPI QR" className="w-40 h-40 object-contain" />
                                     </div>
                                     <div className="bg-zinc-900 border border-primary/30 rounded-2xl px-6 py-4 mb-4">
                                         <span className="text-zinc-500 text-xs font-black uppercase tracking-widest block mb-1 text-center">UPI ID</span>
                                         <span className="text-lg font-bold text-white tracking-widest font-mono">{APP_CONFIG.UPI_ID}</span>
+                                    </div>
+                                    <div className="w-full space-y-3">
+                                        <a 
+                                            href={`upi://pay?pa=${APP_CONFIG.UPI_ID}&pn=${encodeURIComponent(APP_CONFIG.OWNER)}&am=${cartTotal}&cu=INR`}
+                                            className="block w-full bg-primary hover:bg-primary-hover text-black py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-center shadow-lg active:scale-95 transition-all"
+                                        >
+                                            Pay via Google Pay / UPI App
+                                        </a>
+                                        <p className="text-[9px] text-zinc-600 font-black uppercase tracking-widest text-center leading-tight">
+                                            Recommended for Mobile Purchases
+                                        </p>
                                     </div>
                                 </div>
                             ) : (

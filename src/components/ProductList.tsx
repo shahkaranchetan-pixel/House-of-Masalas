@@ -55,7 +55,7 @@ export const ProductList: React.FC<ProductListProps> = ({
         return (
             <button
                 onClick={() => onAddToCart(product)}
-                className="bg-primary hover:bg-primary-hover text-black px-6 py-3 rounded-xl text-xs sm:text-sm font-black tracking-widest transition-all shadow-xl active:scale-95 uppercase group-hover:shadow-primary/25 whitespace-nowrap"
+                className="bg-primary hover:bg-primary-hover text-black px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black tracking-widest transition-all shadow-lg active:scale-95 uppercase group-hover:shadow-primary/20 whitespace-nowrap"
             >
                 Add to Cart
             </button>
@@ -73,7 +73,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
                                     <span className="h-[1px] w-12 bg-primary/40" />
-                                    <span className="text-xs text-primary font-black uppercase tracking-[0.4em]">{catProducts.length} Selections</span>
+                                    <span className="text-xs text-primary font-black uppercase tracking-[0.4em]">{catProducts.length} Items</span>
                                 </div>
                                 <h1 className="text-4xl sm:text-5xl text-white font-serif italic tracking-tight leading-none">
                                     {cat} <span className="text-primary/30 not-italic font-sans">Series</span>
@@ -88,7 +88,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                                         key={product.id}
                                         className="group relative flex items-center gap-4 p-4 rounded-3xl glass-card reveal-scale"
                                     >
-                                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl group-hover:rotate-6 transition-all duration-500 shrink-0 border border-white/5 shadow-2xl relative">
+                                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-2xl flex items-center justify-center text-xl sm:text-2xl group-hover:rotate-6 transition-all duration-500 shrink-0 border border-white/5 shadow-2xl relative">
                                             <div className="absolute inset-0 bg-primary/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                                             <span className="relative z-10">{getSpiceEmoji(product.name)}</span>
                                         </div>
@@ -126,9 +126,9 @@ export const ProductList: React.FC<ProductListProps> = ({
                                             key={product.id}
                                             className="group flex flex-col rounded-[2.5rem] glass-card overflow-hidden reveal-scale"
                                         >
-                                            <div className="relative h-32 sm:h-40 flex items-center justify-center bg-gradient-to-b from-zinc-900/50 to-transparent">
+                                            <div className="relative h-24 sm:h-28 flex items-center justify-center bg-gradient-to-b from-zinc-900/50 to-transparent">
                                                 <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                <span className="text-5xl sm:text-6xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-700 z-10">{getSpiceEmoji(product.name)}</span>
+                                                <span className="text-3xl sm:text-4xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-700 z-10">{getSpiceEmoji(product.name)}</span>
                                                 {inCart && (
                                                     <div className="absolute top-4 right-4 bg-primary text-black rounded-full w-7 h-7 flex items-center justify-center text-[10px] font-black shadow-2xl animate-in zoom-in border-2 border-background">
                                                         {inCart.qty_in_cart}
@@ -138,7 +138,7 @@ export const ProductList: React.FC<ProductListProps> = ({
 
                                             <div className="p-6 flex flex-col flex-1">
                                                 <div className="mb-6">
-                                                    <span className="text-[11px] text-primary/60 uppercase tracking-[0.3em] font-black block mb-2">{product.qty} Selection</span>
+                                                    <span className="text-[11px] text-primary/60 uppercase tracking-[0.3em] font-black block mb-2">{product.qty} Packet</span>
                                                     <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight h-12 line-clamp-2">
                                                         {product.name}
                                                     </h3>

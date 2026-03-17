@@ -8,52 +8,24 @@ import { AdminPanel } from '../components/AdminPanel';
 import { OrderSuccess } from '../components/OrderSuccess';
 import { INITIAL_PRODUCTS, APP_CONFIG } from '../constants/products';
 import { Product, CartItem, DisplayMode, ViewState, Order, CustomerInfo, PaymentMethod, Promotion, PromotionWithCalc } from '../types';
+import * as actions from '../app/actions';
 
-export default function MasalaApp() {
+interface MasalaAppProps {
+    initialProducts: Product[];
+    initialPromos: Promotion[];
+    initialOrders: Order[];
+}
+
+export default function MasalaApp({ initialProducts, initialPromos, initialOrders }: MasalaAppProps) {
     const [view, setView] = useState<ViewState>("shop");
-    const [products, setProducts] = useState<Product[]>(() => {
-        if (typeof window !== "undefined") {
-            const saved = localStorage.getItem("masala_products");
-            return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
-        }
-        return INITIAL_PRODUCTS;
-    });
+    const [products, setProducts] = useState<Product[]>(initialProducts);
     const [cart, setCart] = useState<CartItem[]>([]);
-    const [orders, setOrders] = useState<Order[]>(() => {
-        if (typeof window !== "undefined") {
-            const saved = localStorage.getItem("masala_orders");
-            return saved ? JSON.parse(saved) : [];
-        }
-        return [];
-    });
+    const [orders, setOrders] = useState<Order[]>(initialOrders);
     const [activeCategory, setActiveCategory] = useState<string>("All");
     const [search, setSearch] = useState<string>("");
     const [displayMode, setDisplayMode] = useState<DisplayMode>("list");
     const [orderPlacedRef, setOrderPlacedRef] = useState<string | null>(null);
-    const [promotions, setPromotions] = useState<Promotion[]>(() => {
-        if (typeof window !== "undefined") {
-            const saved = localStorage.getItem("masala_promotions");
-            if (saved) {
-                // Migrate old promos that may lack type/scope/value fields from earlier versions
-                const parsed = JSON.parse(saved) as Partial<Promotion>[];
-                const migrated = parsed.map(p => ({
-                    id: p.id ?? 0,
-                    text: p.text ?? "",
-                    code: p.code ?? "",
-                    isActive: p.isActive ?? true,
-                    type: p.type ?? "percentage",
-                    scope: p.scope ?? "all",
-                    value: p.value ?? 10,
-                    minOrderValue: p.minOrderValue,
-                    targetCategory: p.targetCategory,
-                } as Promotion));
-                // Re-persist migrated data immediately so future loads are clean
-                localStorage.setItem("masala_promotions", JSON.stringify(migrated));
-                return migrated;
-            }
-        }
-        return [];
-    });
+    const [promotions, setPromotions] = useState<Promotion[]>(initialPromos);
 
 
 
@@ -65,20 +37,7 @@ export default function MasalaApp() {
         return null;
     });
 
-    // Persist orders to localStorage
-    React.useEffect(() => {
-        localStorage.setItem("masala_orders", JSON.stringify(orders));
-    }, [orders]);
-
-    // Persist promotions to localStorage
-    React.useEffect(() => {
-        localStorage.setItem("masala_promotions", JSON.stringify(promotions));
-    }, [promotions]);
-
-    // Persist products to localStorage
-    React.useEffect(() => {
-        localStorage.setItem("masala_products", JSON.stringify(products));
-    }, [products]);
+    // PERSISTENCE: We now use server actions instead of useEffect for local storage syncing
 
     // Persist selected promo to localStorage
     React.useEffect(() => {
@@ -99,7 +58,11 @@ export default function MasalaApp() {
 
     const { discountAmount, finalTotal, subtotal, appliedPromo, allValidPromos, allLockedPromos, bestPromoId } = useMemo(() => {
         const subtotal = cart.reduce((sum, item) => sum + (item.price || 0) * item.qty_in_cart, 0);
-        const activePromos = promotions.filter(p => p.isActive);
+        const activePromos = promotions.filter(p => {
+            if (!p.isActive) return false;
+            if (p.expiresAt && new Date(p.expiresAt).getTime() < Date.now()) return false;
+            return true;
+        });
 
         const promoWithCalc: PromotionWithCalc[] = activePromos.map(promo => {
             let discount = 0;
@@ -214,22 +177,27 @@ export default function MasalaApp() {
         setOrders(prev => [newOrder, ...prev]);
         setOrderPlacedRef(ref);
         setCart([]);
-        // FIX Bug 2: Clear persistent promo selection after order is placed
         setUserSelectedPromoId(null);
+        
+        // Save to Database
+        actions.storeOrder(newOrder);
     };
 
     const addProduct = () => {
         const newId = Math.max(...products.map(p => p.id), 0) + 1;
         const newProd: Product = { id: newId, name: "New Product", qty: "1 Kg", price: 0, category: "Masalas" };
         setProducts(prev => [newProd, ...prev]);
+        actions.addProduct(newProd);
     };
 
     const updateProduct = (updated: Product) => {
         setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
+        actions.updateProduct(updated);
     };
 
     const deleteProduct = (id: number) => {
         setProducts(prev => prev.filter(p => p.id !== id));
+        actions.deleteProduct(id);
     };
 
     const addPromotion = () => {
@@ -244,14 +212,17 @@ export default function MasalaApp() {
             code: `PROMO${newId}`
         };
         setPromotions(prev => [newPromo, ...prev]);
+        actions.addPromotion(newPromo);
     };
 
     const updatePromotion = (updated: Promotion) => {
         setPromotions(prev => prev.map(p => p.id === updated.id ? updated : p));
+        actions.updatePromotion(updated);
     };
 
     const deletePromotion = (id: number) => {
         setPromotions(prev => prev.filter(p => p.id !== id));
+        actions.deletePromotion(id);
     };
 
     const handleContinue = () => {
@@ -283,7 +254,11 @@ export default function MasalaApp() {
     };
 
     const categories = ["All", "Masalas", "Masala Powders"];
-    const activePromotions = promotions.filter(p => p.isActive);
+    const activePromotions = promotions.filter(p => {
+        if (!p.isActive) return false;
+        if (p.expiresAt && new Date(p.expiresAt).getTime() < Date.now()) return false;
+        return true;
+    });
 
     if (orderPlacedRef) {
         return <OrderSuccess orderRef={orderPlacedRef} onContinue={handleContinue} />;
@@ -303,102 +278,7 @@ export default function MasalaApp() {
                     <div className="max-w-7xl mx-auto px-4 mt-8 sm:mt-12">
 
                         {/* ── Active Offers Section (replaces marquee) ── */}
-                        {activePromotions.length > 0 && (
-                            <div className="mb-16">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <span className="h-[1px] w-8 bg-primary/40" />
-                                    <span className="text-xs sm:text-sm font-black text-primary uppercase tracking-[0.5em]">Active Offers</span>
-                                    <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/20 to-transparent" />
-                                    <span className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">{activePromotions.length} Live</span>
-                                </div>
 
-                                {/* FIX D4: Horizontal scrollable offer cards — all visible */}
-                                <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-                                    {activePromotions.map(promo => {
-                                        const scopeLabel = promo.scope === "category" && promo.targetCategory
-                                            ? promo.targetCategory
-                                            : "All Items";
-                                        const discountLabel = (promo.type ?? "percentage") === "percentage"
-                                            ? `${promo.value}% Off`
-                                            : `₹${promo.value} Off`;
-                                        const isSelected = userSelectedPromoId === promo.id;
-
-                                        return (
-                                            <div
-                                                key={promo.id}
-                                                className={`group shrink-0 rounded-[2rem] border p-6 cursor-pointer transition-all duration-500 min-w-[220px] max-w-[260px] relative overflow-hidden flex flex-col gap-4
-                                                    ${isSelected
-                                                        ? "border-primary bg-primary/5 shadow-2xl shadow-primary/20"
-                                                        : "glass-card border-white/10 hover:border-primary/40 hover:bg-primary/5"}`}
-                                            >
-                                                <div className="absolute top-0 right-0 w-28 h-28 bg-primary/5 blur-3xl rounded-full pointer-events-none" />
-
-                                                {/* FIX D5: Scope badge */}
-                                                <div className="flex items-center justify-between">
-                                                    <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest border
-                                                        ${promo.scope === "category"
-                                                            ? "bg-blue-500/10 text-blue-400 border-blue-400/20"
-                                                            : "bg-primary/10 text-primary border-primary/20"}`}>
-                                                        {scopeLabel}
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-400 uppercase">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                                                        Active
-                                                    </span>
-                                                </div>
-
-                                                {/* FIX D2: Big discount display */}
-                                                <div>
-                                                    <div className="text-3xl font-bold text-luxury-gold tracking-tighter leading-none mb-1">
-                                                        {discountLabel}
-                                                    </div>
-                                                    <div className="text-sm font-bold text-white">{promo.text}</div>
-                                                </div>
-
-                                                {/* Code + Min Order */}
-                                                <div className="border-t border-white/5 pt-4 flex items-center justify-between">
-                                                    <div>
-                                                        <div className="font-mono text-primary font-bold text-sm tracking-widest">{promo.code}</div>
-                                                        {/* FIX D3: Minimum order hint */}
-                                                        {(promo.minOrderValue || 0) > 0 && (
-                                                            <div className="text-[9px] text-zinc-600 font-black uppercase tracking-wider mt-1">
-                                                                Min. ₹{promo.minOrderValue}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="flex gap-2">
-                                                        {/* Copy option */}
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                copyToClipboard(promo.code, () => {
-                                                                    const el = e.currentTarget;
-                                                                    el.innerText = "✓";
-                                                                    setTimeout(() => el.innerText = "Copy", 1500);
-                                                                });
-                                                            }}
-                                                            className="text-[9px] font-black text-zinc-600 hover:text-white border border-white/10 hover:border-white/30 px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all"
-                                                        >
-                                                            Copy
-                                                        </button>
-                                                        {/* FIX R6: One-click apply + navigate to checkout */}
-                                                        <button
-                                                            onClick={() => {
-                                                                setUserSelectedPromoId(promo.id);
-                                                                setView("checkout");
-                                                            }}
-                                                            className="text-[9px] font-black text-black bg-primary hover:bg-primary-hover px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all shadow-lg shadow-primary/20 group-hover:shadow-primary/40"
-                                                        >
-                                                            Apply
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
 
                         {/* Filter Bar */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12 items-center">
@@ -512,9 +392,32 @@ export default function MasalaApp() {
                         onBack={() => setView("shop")}
                     />
                 )}
+
+                {/* Mobile Sticky Bottom Cart */}
+                {view === "shop" && cartCount > 0 && (
+                    <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 z-50 animate-in slide-in-from-bottom-6">
+                        <button
+                            onClick={() => setView("checkout")}
+                            className="w-full bg-primary text-black rounded-2xl p-4 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(212,175,55,0.2)] active:scale-95 transition-transform"
+                        >
+                            <div className="flex flex-col items-start leading-tight">
+                                <span className="text-[10px] uppercase font-black tracking-widest opacity-70">
+                                    {cartCount} {cartCount === 1 ? 'Item' : 'Items'}
+                                </span>
+                                <span className="text-lg font-bold tracking-tight font-serif">
+                                    ₹{cartTotal}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm font-black uppercase tracking-widest">Proceed</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </button>
+                    </div>
+                )}
             </main>
 
-            <footer className="border-t border-white/5 py-12 mt-12 bg-zinc-950/50">
+            <footer className="border-t border-white/5 py-12 mt-12 bg-zinc-950/50 pb-28 sm:pb-12">
                 <div className="max-w-6xl mx-auto px-4 text-center">
                     <h4 className="text-gold text-lg mb-2 font-serif">{APP_CONFIG.OWNER}</h4>
                     <p className="text-xs text-zinc-500 uppercase tracking-widest mb-6 font-medium">House of Masala — Curated Spices Hub</p>

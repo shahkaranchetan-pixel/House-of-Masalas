@@ -143,15 +143,15 @@ export const AdminPanel = (props: AdminPanelProps) => {
                         🔐
                     </div>
                     <div className="space-y-2 mb-10">
-                        <span className="text-[10px] text-primary/60 font-black uppercase tracking-[0.4em]">Administrative Vault</span>
-                        <h1 className="text-4xl text-white font-serif italic">Authentication</h1>
+                        <span className="text-[10px] text-primary/60 font-black uppercase tracking-[0.4em]">Internal Access</span>
+                        <h1 className="text-4xl text-white font-serif italic">Admin Login</h1>
                     </div>
 
                     <div className="space-y-6 pt-6">
                         <div className="space-y-3">
                             <input
                                 type="password"
-                                placeholder="ACCESS KEY"
+                                placeholder="PASSWORD"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                                 onKeyDown={e => e.key === "Enter" && handleLogin()}
@@ -164,14 +164,14 @@ export const AdminPanel = (props: AdminPanelProps) => {
                             onClick={handleLogin}
                             className="w-full btn-primary-luxury py-5 shadow-primary/10 text-sm"
                         >
-                            Authorize Entry
+                            Login to Dashboard
                         </button>
                         
                         <button
                             onClick={onBack}
                             className="w-full text-zinc-600 hover:text-white text-xs uppercase tracking-[0.3em] font-black transition-all pt-6"
                         >
-                            ← Return to Gallery
+                            ← Back to Shop
                         </button>
                     </div>
                 </div>
@@ -185,14 +185,14 @@ export const AdminPanel = (props: AdminPanelProps) => {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <span className="h-[1px] w-8 bg-primary/40" />
-                        <span className="text-[10px] text-primary font-black uppercase tracking-[0.4em]">Management Suite</span>
+                        <span className="text-[10px] text-primary font-black uppercase tracking-[0.4em]">Admin Panel</span>
                     </div>
                     <h2 className="text-5xl text-white font-serif italic tracking-tight">
-                        Command <span className="text-primary/30 not-italic font-sans">Center</span>
+                        Admin <span className="text-primary/30 not-italic font-sans">Dashboard</span>
                     </h2>
                     
                     <div className="flex gap-4 sm:gap-8 pt-6 overflow-x-auto hide-scrollbar">
-                        {([["inventory", "Inventory"], ["promotions", "Campaigns"], ["reports", "Analytic Reports"]] as const).map(([id, label]) => (
+                        {([["inventory", "Inventory"], ["promotions", "Offers"], ["reports", "Sales Reports"]] as const).map(([id, label]) => (
                             <button
                                 key={id}
                                 onClick={() => setActiveTab(id)}
@@ -207,10 +207,10 @@ export const AdminPanel = (props: AdminPanelProps) => {
 
                 <div className="flex gap-4 h-fit">
                     {activeTab === "inventory" && (
-                        <button onClick={handleAddClick} className="btn-primary-luxury text-[10px] sm:text-xs px-6 py-4 tracking-[0.2em]">+ Add Entity</button>
+                        <button onClick={handleAddClick} className="btn-primary-luxury text-[10px] sm:text-xs px-6 py-4 tracking-[0.2em]">+ Add Product</button>
                     )}
                     {activeTab === "promotions" && (
-                        <button onClick={handleAddClick} className="btn-primary-luxury text-[10px] sm:text-xs px-6 py-4 tracking-[0.2em]">+ New Campaign</button>
+                        <button onClick={handleAddClick} className="btn-primary-luxury text-[10px] sm:text-xs px-6 py-4 tracking-[0.2em]">+ New Offer</button>
                     )}
                     {activeTab === "reports" && (
                         <button
@@ -222,7 +222,7 @@ export const AdminPanel = (props: AdminPanelProps) => {
                             Export
                         </button>
                     )}
-                    <button onClick={onBack} className="btn-secondary-luxury text-[10px] sm:text-xs px-6 py-4 tracking-[0.2em]">Terminate</button>
+                    <button onClick={onBack} className="btn-secondary-luxury text-[10px] sm:text-xs px-6 py-4 tracking-[0.2em]">Exit Panel</button>
                 </div>
             </div>
 
@@ -234,7 +234,7 @@ export const AdminPanel = (props: AdminPanelProps) => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
                             </div>
                             <input
-                                placeholder="Filter resources..."
+                                placeholder="Search products..."
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
                                 className="input-premium pl-14 py-3 text-xs tracking-wider"
@@ -257,24 +257,24 @@ export const AdminPanel = (props: AdminPanelProps) => {
                                                     {editingId === p.id ? (
                                                         <div className="flex-1 flex flex-col gap-5 animate-in zoom-in duration-300">
                                                             <div className="grid grid-cols-2 gap-4">
-                                                                <input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="input-premium py-3 text-sm" placeholder="Entity Name" />
-                                                                <input value={editForm.qty} onChange={e => setEditForm(f => ({ ...f, qty: e.target.value }))} className="input-premium py-3 text-sm" placeholder="Volume" />
+                                                                <input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="input-premium py-3 text-sm" placeholder="Product Name" />
+                                                                <input value={editForm.qty} onChange={e => setEditForm(f => ({ ...f, qty: e.target.value }))} className="input-premium py-3 text-sm" placeholder="Quantity (e.g. 1kg)" />
                                                             </div>
                                                             <div className="flex gap-4">
                                                                 <div className="flex-1 flex items-center gap-3 bg-zinc-900 rounded-2xl px-5 border border-white/5">
                                                                     <span className="text-primary font-black text-sm">₹</span>
-                                                                    <input type="number" value={editForm.price || ""} onChange={e => setEditForm(f => ({ ...f, price: e.target.value ? Number(e.target.value) : null }))} className="w-full bg-transparent text-white text-sm py-3 outline-none" placeholder="Appraisal" />
+                                                                    <input type="number" value={editForm.price || ""} onChange={e => setEditForm(f => ({ ...f, price: e.target.value ? Number(e.target.value) : null }))} className="w-full bg-transparent text-white text-sm py-3 outline-none" placeholder="Price" />
                                                                 </div>
-                                                                <button onClick={saveEdit} className="btn-primary-luxury py-3 text-xs px-8">Commit</button>
-                                                                <button onClick={() => setEditingId(null)} className="text-zinc-600 hover:text-white text-[11px] font-black uppercase tracking-widest">Abort</button>
+                                                                <button onClick={saveEdit} className="btn-primary-luxury py-3 text-xs px-8">Save</button>
+                                                                <button onClick={() => setEditingId(null)} className="text-zinc-600 hover:text-white text-[11px] font-black uppercase tracking-widest">Cancel</button>
                                                             </div>
                                                         </div>
                                                     ) : (
                                                         <>
-                                                            <div className="w-16 h-16 bg-zinc-900/80 rounded-2xl flex items-center justify-center text-4xl shrink-0 shadow-2xl border border-white/5">{getSpiceEmoji(p.name)}</div>
+                                                            <div className="w-10 h-10 bg-zinc-900/80 rounded-2xl flex items-center justify-center text-xl shrink-0 shadow-2xl border border-white/5">{getSpiceEmoji(p.name)}</div>
                                                             <div className="flex-1 min-w-0">
                                                                 <div className="text-base font-bold text-white mb-1.5 truncate tracking-tight">{p.name}</div>
-                                                                <div className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.2em]">{p.qty} Selection</div>
+                                                                <div className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.2em]">{p.qty} Packet</div>
                                                             </div>
                                                             <div className="flex items-center gap-5">
                                                                 <span className="text-xl font-bold text-luxury-gold tracking-tighter">
@@ -316,6 +316,18 @@ export const AdminPanel = (props: AdminPanelProps) => {
                                             <div className="space-y-3">
                                                 <label className="text-[11px] text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Min. Order (₹)</label>
                                                 <input type="number" min={0} value={editPromoForm.minOrderValue ?? 0} onChange={e => setEditPromoForm(f => ({ ...f, minOrderValue: Number(e.target.value) }))} className="input-premium text-xs" placeholder="0 = no minimum" />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <label className="text-[11px] text-zinc-600 uppercase tracking-[0.4em] font-black px-1">Valid Until (Optional)</label>
+                                                <input
+                                                    type="datetime-local"
+                                                    value={editPromoForm.expiresAt ? new Date(new Date(editPromoForm.expiresAt).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
+                                                    onChange={e => {
+                                                        const dateVal = e.target.value ? new Date(e.target.value).toISOString() : undefined;
+                                                        setEditPromoForm(f => ({ ...f, expiresAt: dateVal }));
+                                                    }}
+                                                    className="input-premium text-xs"
+                                                />
                                             </div>
                                         </div>
 
@@ -378,8 +390,8 @@ export const AdminPanel = (props: AdminPanelProps) => {
                                         )}
 
                                         <div className="flex gap-4 pt-2 border-t border-white/5">
-                                            <button onClick={savePromoEdit} className="btn-primary-luxury px-8 text-xs tracking-[0.2em]">Save Campaign</button>
-                                            <button onClick={() => setEditingPromoId(null)} className="text-zinc-600 hover:text-white text-[11px] font-black uppercase tracking-widest px-4">Discard</button>
+                                            <button onClick={savePromoEdit} className="btn-primary-luxury px-8 text-xs tracking-[0.2em]">Save Offer</button>
+                                            <button onClick={() => setEditingPromoId(null)} className="text-zinc-600 hover:text-white text-[11px] font-black uppercase tracking-widest px-4">Cancel</button>
                                         </div>
                                     </div>
                                 ) : (
@@ -410,9 +422,21 @@ export const AdminPanel = (props: AdminPanelProps) => {
                                                         </span>
                                                     )}
                                                     {/* Status */}
-                                                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${promo.isActive ? 'text-emerald-500/70' : 'text-zinc-700'}`}>
-                                                        {promo.isActive ? '● Active' : '○ Suspended'}
-                                                    </span>
+                                                    {(() => {
+                                                        const isExpired = promo.expiresAt && new Date(promo.expiresAt) < new Date();
+                                                        return (
+                                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] 
+                                                                ${isExpired ? 'text-red-500' : promo.isActive ? 'text-emerald-500/70' : 'text-zinc-700'}`}>
+                                                                {isExpired ? '● Expired' : promo.isActive ? '● Active' : '○ Disabled'}
+                                                            </span>
+                                                        );
+                                                    })()}
+                                                    {/* Expiry */}
+                                                    {promo.expiresAt && (
+                                                        <span className={`text-[10px] font-black tracking-wider ${new Date(promo.expiresAt) < new Date() ? 'text-red-500 opacity-60' : 'text-orange-400'}`}>
+                                                            ⏳ Ends: {new Date(promo.expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -433,17 +457,17 @@ export const AdminPanel = (props: AdminPanelProps) => {
                 {activeTab === "reports" && (
                     <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-6">
                         <div className="flex items-center justify-between px-2">
-                             <span className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.4em]">{allOrders.length} Transactions Logged</span>
+                             <span className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.4em]">{allOrders.length} Orders Recorded</span>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-separate border-spacing-y-3">
                                 <thead className="hidden sm:table-header-group">
                                     <tr className="text-xs text-primary/40 uppercase tracking-[0.4em] font-black">
-                                        <th className="px-6 pb-4">Reference</th>
-                                        <th className="px-6 pb-4">Acquisition Date</th>
-                                        <th className="px-6 pb-4">Entity Description</th>
-                                        <th className="px-6 pb-4 text-right">Commitment</th>
-                                        <th className="px-6 pb-4 text-center">Settlement</th>
+                                        <th className="px-6 pb-4">Order ID</th>
+                                        <th className="px-6 pb-4">Order Date</th>
+                                        <th className="px-6 pb-4">Customer Details</th>
+                                        <th className="px-6 pb-4 text-right">Final Total</th>
+                                        <th className="px-6 pb-4 text-center">Payment Method</th>
                                     </tr>
                                 </thead>
                                 <tbody>

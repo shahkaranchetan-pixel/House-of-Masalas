@@ -45,6 +45,7 @@ export interface Promotion {
     scope: PromotionScope;
     targetCategory?: string;
     minOrderValue?: number;
+    expiresAt?: string;
 }
 
 export interface PromotionWithCalc extends Promotion {

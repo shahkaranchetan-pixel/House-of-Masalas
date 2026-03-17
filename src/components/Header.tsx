@@ -27,9 +27,9 @@ export const Header: React.FC<HeaderProps> = ({ cartCount, cartTotal, onViewCart
                         {/* Brand Section */}
                         <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
                             <div className="relative">
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl animate-spice-spin border border-primary/20 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
-                                    🌶️
-                                </div>
+                                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-primary/10 rounded-2xl flex items-center justify-center text-lg sm:text-xl animate-spice-spin border border-primary/20 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                                     🌶️
+                                 </div>
                                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                             </div>
                             <div className="flex flex-col">
@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ cartCount, cartTotal, onViewCart
                         <button
                             onClick={onAdminClick}
                             className="hidden sm:flex p-2.5 rounded-xl border border-white/5 text-zinc-600 hover:text-primary hover:border-primary/30 transition-all duration-500 bg-zinc-900/50"
-                            title="Management Suite"
+                            title="Admin Panel"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({ cartCount, cartTotal, onViewCart
                                 )}
                             </div>
                             <div className="flex flex-col items-start leading-tight">
-                                <span className="text-[10px] sm:text-[11px] text-zinc-500 font-black uppercase tracking-widest hidden xs:block">Your Selection</span>
+                                <span className="text-[10px] sm:text-[11px] text-zinc-500 font-black uppercase tracking-widest hidden xs:block">Your Cart</span>
                                 <span className="text-xs sm:text-base font-bold text-white tracking-widest sm:tracking-tighter">
                                     {cartTotal > 0 ? `₹${cartTotal}` : "Shop Now"}
                                 </span>
