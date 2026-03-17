@@ -44,7 +44,7 @@ export async function getMasalaData() {
     `);
 
     // Map rows to interfaces correctly
-    const formattedOrders: Order[] = orders.map(o => ({
+    const formattedOrders: Order[] = orders.map((o: any) => ({
       id: o.id,
       date: o.date.toISOString(),
       customer: {
@@ -161,7 +161,7 @@ export async function storeOrder(order: Order) {
         order.total, 
         order.originalTotal, 
         order.discountAmount, 
-        order.applied_promo_code, 
+        order.appliedPromoCode, 
         order.paymentMethod
       ]
     );
