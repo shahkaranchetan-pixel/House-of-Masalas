@@ -139,6 +139,14 @@ h1, h2, h3, .font-serif {
     background-size: 200% 100%;
     animation: shimmer 3s infinite;
   }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Custom Component Classes */

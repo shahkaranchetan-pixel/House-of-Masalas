@@ -66,9 +66,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
             `🎁 *Promo Applied:* ${appliedPromoCode || "None"}\n` +
             `✨ *Savings: ₹${discountAmount}*\n` +
             `✅ *Final Total: ₹${cartTotal}*\n` +
-            `💳 Payment: ${paymentMethod === "upi" ? "UPI (online)" : "Cash on Delivery"}\n` +
             `━━━━━━━━━━━━━━━━━━━━\n` +
-            `Please confirm & arrange delivery 🚚`;
+            `Payment will be collected Offline 🚚\n` +
+            `Please confirm my order.`;
 
         const whatsappURL = `https://wa.me/91${APP_CONFIG.PHONE}?text=${encodeURIComponent(message)}`;
         window.open(whatsappURL, "_blank");
@@ -104,8 +104,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
             </div>
 
             {/* Stepper */}
-            <div className="grid grid-cols-3 gap-4 mb-20">
-                {[{ n: 1, label: "Review" }, { n: 2, label: "Shipping" }, { n: 3, label: "Payment" }].map(({ n, label }) => (
+            <div className="grid grid-cols-2 gap-4 mb-20">
+                {[{ n: 1, label: "Review" }, { n: 2, label: "Shipping" }].map(({ n, label }) => (
                     <div key={n} className="relative group cursor-pointer" onClick={() => step > n && setStep(n)}>
                         <div className={`h-1.5 rounded-full mb-3 transition-all duration-1000 ${step >= n ? "bg-primary shadow-[0_0_15px_var(--primary-glow)]" : "bg-zinc-800"}`} />
                         <div className="flex items-center gap-2">
@@ -351,98 +351,19 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         <div className="flex gap-4 pt-4">
                             <button onClick={() => setStep(1)} className="btn-secondary-luxury flex-1">Back</button>
                             <button
-                                onClick={() => setStep(3)}
-                                disabled={!customerInfo.name || !customerInfo.phone || !customerInfo.address}
-                                className="btn-primary-luxury flex-[2] disabled:opacity-30 disabled:grayscale transition-all"
-                            >
-                                Continue to Payment
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {step === 3 && (
-                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 max-w-lg mx-auto">
-                    <div className="glass-card rounded-[2.5rem] p-10 space-y-10">
-                        <div className="flex gap-4">
-                            {([["cash", "Cash on Delivery", "💵"], ["upi", "UPI Payment", "📱"]] as const).map(([method, label, icon]) => (
-                                <button
-                                    key={method}
-                                    onClick={() => setPaymentMethod(method as PaymentMethod)}
-                                    className={`flex-1 p-6 rounded-3xl border transition-all duration-700 flex flex-col items-center gap-3
-                                        ${paymentMethod === method
-                                            ? "border-primary bg-primary/10 premium-glow text-primary"
-                                            : "border-white/5 bg-zinc-950/50 text-zinc-600 hover:text-zinc-400"}`}
-                                >
-                                    <span className="text-3xl">{icon}</span>
-                                    <span className="text-xs font-black uppercase tracking-widest">{label}</span>
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="bg-zinc-950/80 rounded-[2rem] border border-white/5 p-8 relative overflow-hidden group">
-                            <div className="absolute inset-0 shimmer-bg opacity-30" />
-
-                            {paymentMethod === "upi" ? (
-                                <div className="flex flex-col items-center relative z-10">
-                                    <span className="text-xs text-primary font-black uppercase tracking-[0.4em] mb-6">Secure UPI Payment</span>
-                                    
-                                    <div className="w-full bg-zinc-900 border border-primary/30 rounded-2xl px-4 py-4 mb-6 flex flex-col items-center">
-                                        <span className="text-zinc-500 text-[10px] font-black uppercase tracking-widest block mb-2 text-center">UPI ID</span>
-                                        <span className="text-sm font-bold text-white tracking-widest font-mono text-center break-all select-all">{APP_CONFIG.UPI_ID}</span>
-                                    </div>
-                                    <div className="w-full space-y-3">
-                                        <a 
-                                            href={`upi://pay?pa=${APP_CONFIG.UPI_ID}&pn=${encodeURIComponent(APP_CONFIG.OWNER)}&am=${cartTotal}&cu=INR`}
-                                            className="block w-full bg-primary hover:bg-primary-hover text-black py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-center shadow-lg active:scale-95 transition-all"
-                                        >
-                                            Pay via Google Pay / UPI App
-                                        </a>
-                                        <p className="text-[9px] text-zinc-600 font-black uppercase tracking-widest text-center leading-tight">
-                                            Recommended for Mobile Purchases
-                                        </p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center py-8 relative z-10">
-                                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                                        <span className="text-3xl">🚚</span>
-                                    </div>
-                                    <h4 className="text-2xl font-serif italic text-white mb-2">Home Delivery</h4>
-                                    <p className="text-xs text-zinc-500 font-black uppercase tracking-[0.2em]">Pay cash at the time of delivery</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Order summary before placing */}
-                        <div className="bg-zinc-950/60 rounded-2xl border border-white/5 p-6 space-y-2">
-                            <div className="flex justify-between text-zinc-500 text-xs">
-                                <span>Subtotal</span><span>₹{subtotal}</span>
-                            </div>
-                            {discountAmount > 0 && (
-                                <div className="flex justify-between text-emerald-500 text-xs font-bold">
-                                    <span>Discount ({appliedPromoCode})</span><span>−₹{discountAmount}</span>
-                                </div>
-                            )}
-                            <div className="flex justify-between text-white font-bold text-base border-t border-white/5 pt-2 mt-2">
-                                <span>Total</span><span className="text-luxury-gold">₹{cartTotal}</span>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-4">
-                            <button onClick={() => setStep(2)} className="btn-secondary-luxury flex-1">Back</button>
-                            <button
                                 onClick={placeOrder}
-                                className="btn-primary-luxury flex-[2] flex items-center justify-center gap-3 bg-emerald-500 shadow-emerald-500/20 hover:bg-emerald-400"
+                                disabled={!customerInfo.name || !customerInfo.phone || !customerInfo.address}
+                                className="btn-primary-luxury flex-[2] bg-emerald-500 shadow-emerald-500/20 hover:bg-emerald-400 text-black flex items-center justify-center gap-2 disabled:opacity-30 disabled:grayscale transition-all"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7"/></svg>
-                                Place Order
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                                Confirm Order
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+
+
         </div>
     );
 };

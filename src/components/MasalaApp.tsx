@@ -317,20 +317,20 @@ export default function MasalaApp({ initialProducts, initialPromos, initialOrder
                                 <span className="text-xs sm:text-sm font-black text-primary uppercase tracking-[0.5em]">Collections</span>
                                 <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/20 to-transparent" />
                             </div>
-                            <div className="flex gap-4 overflow-x-auto hide-scrollbar">
+                            <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
                                 {categories.map(cat => (
                                     <button
                                         key={cat}
                                         onClick={() => setActiveCategory(cat)}
-                                        className={`group relative px-10 py-4 rounded-2xl transition-all duration-500 whitespace-nowrap overflow-hidden
+                                        className={`group relative px-6 sm:px-10 py-4 rounded-2xl transition-all duration-500 whitespace-nowrap shrink-0 overflow-hidden
                                             ${activeCategory === cat
-                                                ? "text-black font-black shadow-2xl shadow-primary/20"
+                                                ? "text-black font-black shadow-2xl shadow-primary/20 scale-[1.02]"
                                                 : "text-zinc-500 hover:text-white"}`}
                                     >
                                         {activeCategory === cat && (
                                             <div className="absolute inset-0 bg-primary animate-in fade-in zoom-in duration-500" />
                                         )}
-                                        <span className="relative z-10 text-xs sm:text-sm uppercase tracking-widest font-black">{cat}</span>
+                                        <span className="relative z-10 text-[11px] sm:text-xs uppercase tracking-wide sm:tracking-widest font-black">{cat}</span>
                                         {activeCategory !== cat && (
                                             <div className="absolute inset-0 border border-white/10 rounded-2xl group-hover:bg-white/5 transition-colors" />
                                         )}
