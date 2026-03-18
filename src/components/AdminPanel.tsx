@@ -84,12 +84,13 @@ export const AdminPanel = (props: AdminPanelProps) => {
     };
 
     const downloadCSV = () => {
-        const headers = ["Order Ref", "Date", "Customer", "Phone", "Promo Code", "Subtotal", "Discount", "Total", "Payment"];
+        const headers = ["Order Ref", "Date", "Customer", "Phone", "Items", "Promo Code", "Subtotal", "Discount", "Total", "Payment"];
         const rows = allOrders.map(o => [
             o.id,
             new Date(o.date).toLocaleDateString(),
             o.customer.name,
             o.customer.phone,
+            `"${o.items.map(i => `${i.name} (${i.qty_in_cart})`).join('; ')}"`,
             o.appliedPromoCode || "None",
             o.originalTotal || o.total,
             o.discountAmount || 0,
@@ -464,10 +465,11 @@ export const AdminPanel = (props: AdminPanelProps) => {
                                 <thead className="hidden sm:table-header-group">
                                     <tr className="text-xs text-primary/40 uppercase tracking-[0.4em] font-black">
                                         <th className="px-6 pb-4">Order ID</th>
-                                        <th className="px-6 pb-4">Order Date</th>
-                                        <th className="px-6 pb-4">Customer Details</th>
-                                        <th className="px-6 pb-4 text-right">Final Total</th>
-                                        <th className="px-6 pb-4 text-center">Payment Method</th>
+                                        <th className="px-6 pb-4">Date</th>
+                                        <th className="px-6 pb-4">Customer</th>
+                                        <th className="px-6 pb-4">Items</th>
+                                        <th className="px-6 pb-4 text-right">Total</th>
+                                        <th className="px-6 pb-4 text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -482,6 +484,16 @@ export const AdminPanel = (props: AdminPanelProps) => {
                                             <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all">
                                                 <div className="text-xs font-black text-white mb-1">{o.customer.name}</div>
                                                 <div className="text-[9px] text-zinc-600 tracking-widest font-bold uppercase">{o.customer.phone}</div>
+                                            </td>
+                                            <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all max-w-[250px]">
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {o.items.map((item, idx) => (
+                                                        <div key={idx} className="bg-zinc-900 border border-white/5 px-2 py-1 rounded-lg text-[9px] flex items-center gap-2">
+                                                            <span className="text-zinc-500 font-bold">{item.qty_in_cart}x</span>
+                                                            <span className="text-white font-medium truncate max-w-[120px]">{item.name}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all text-right">
                                                 <div className="text-base font-bold text-luxury-gold tracking-tighter">₹{o.total}</div>
