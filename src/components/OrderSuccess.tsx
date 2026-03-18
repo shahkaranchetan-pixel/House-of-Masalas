@@ -24,29 +24,29 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderRef, onContinue
                 <div className="space-y-3 mb-10">
                     <div className="flex items-center justify-center gap-3">
                         <span className="h-[1px] w-6 bg-primary/30" />
-                        <span className="text-[10px] text-primary font-black uppercase tracking-[0.4em]">Acquisition Successful</span>
+                        <span className="text-[10px] text-primary font-black uppercase tracking-[0.4em]">Success</span>
                         <span className="h-[1px] w-6 bg-primary/30" />
                     </div>
-                    <h2 className="text-4xl text-white font-serif italic">Exquisite Selection</h2>
+                    <h2 className="text-4xl text-white font-serif italic">Order Placed!</h2>
                 </div>
 
                 <div className="bg-zinc-950/80 border border-white/5 rounded-[2rem] p-8 mb-12 text-left relative group">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-black">Archive Ref.</span>
+                        <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-black">Order Ref.</span>
                         <span className="text-luxury-gold font-mono font-bold text-lg tracking-widest">{orderRef}</span>
                     </div>
 
                     <div className="space-y-6">
                         <div className="flex items-start gap-4">
-                            <div className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] shrink-0 font-black border border-primary/20">I</div>
+                            <div className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] shrink-0 font-black border border-primary/20">1</div>
                             <p className="text-xs text-zinc-400 leading-relaxed font-medium">
-                                <strong className="text-white">Herald of Flavor:</strong> {APP_CONFIG.OWNER} will initiate formal communication shortly to coordinate dispatch.
+                                <strong className="text-white">What's Next:</strong> {APP_CONFIG.OWNER} will contact you via phone/WhatsApp soon to confirm delivery.
                             </p>
                         </div>
                         <div className="flex items-start gap-4">
-                            <div className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] shrink-0 font-black border border-primary/20">II</div>
+                            <div className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] shrink-0 font-black border border-primary/20">2</div>
                             <p className="text-xs text-zinc-400 leading-relaxed font-medium">
-                                Your digital credentials and settlement details have been transmitted via secure messenger.
+                                A copy of your order has been sent to us for processing.
                             </p>
                         </div>
                     </div>
@@ -56,11 +56,11 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderRef, onContinue
                     onClick={onContinue}
                     className="w-full btn-primary-luxury py-5"
                 >
-                    Return to the Sensory Gallery
+                    Continue Shopping
                 </button>
 
                 <div className="mt-10 text-[9px] text-zinc-700 uppercase tracking-[0.5em] font-black">
-                    A Legacy of Spices Awaits Your Arrival
+                    Authentic Homemade Spices — Best Quality Guaranteed
                 </div>
             </div>
         </div>

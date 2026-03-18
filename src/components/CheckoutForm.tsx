@@ -387,12 +387,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                             {paymentMethod === "upi" ? (
                                 <div className="flex flex-col items-center relative z-10">
                                     <span className="text-xs text-primary font-black uppercase tracking-[0.4em] mb-6">Secure UPI Payment</span>
-                                    <div className="bg-white p-3 rounded-3xl mb-6 shadow-2xl border-4 border-primary/20">
-                                        <img src="/qr.jpg" alt="UPI QR" className="w-40 h-40 object-contain" />
-                                    </div>
-                                    <div className="bg-zinc-900 border border-primary/30 rounded-2xl px-6 py-4 mb-4">
-                                        <span className="text-zinc-500 text-xs font-black uppercase tracking-widest block mb-1 text-center">UPI ID</span>
-                                        <span className="text-lg font-bold text-white tracking-widest font-mono">{APP_CONFIG.UPI_ID}</span>
+                                    
+                                    <div className="w-full bg-zinc-900 border border-primary/30 rounded-2xl px-4 py-4 mb-6 flex flex-col items-center">
+                                        <span className="text-zinc-500 text-[10px] font-black uppercase tracking-widest block mb-2 text-center">UPI ID</span>
+                                        <span className="text-sm font-bold text-white tracking-widest font-mono text-center break-all select-all">{APP_CONFIG.UPI_ID}</span>
                                     </div>
                                     <div className="w-full space-y-3">
                                         <a 

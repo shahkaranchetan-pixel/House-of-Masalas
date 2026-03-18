@@ -395,22 +395,24 @@ export default function MasalaApp({ initialProducts, initialPromos, initialOrder
 
                 {/* Mobile Sticky Bottom Cart */}
                 {view === "shop" && cartCount > 0 && (
-                    <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 z-50 animate-in slide-in-from-bottom-6">
+                    <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50 animate-in slide-in-from-bottom-10 duration-700">
                         <button
                             onClick={() => setView("checkout")}
-                            className="w-full bg-primary text-black rounded-2xl p-4 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(212,175,55,0.2)] active:scale-95 transition-transform"
+                            className="w-full bg-primary text-black rounded-3xl p-3.5 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_20px_rgba(212,175,55,0.3)] active:scale-[0.98] transition-all border border-white/20"
                         >
-                            <div className="flex flex-col items-start leading-tight">
-                                <span className="text-[10px] uppercase font-black tracking-widest opacity-70">
-                                    {cartCount} {cartCount === 1 ? 'Item' : 'Items'}
-                                </span>
-                                <span className="text-lg font-bold tracking-tight font-serif">
-                                    ₹{cartTotal}
-                                </span>
+                            <div className="flex items-center gap-4 pl-2">
+                                <div className="flex flex-col items-start leading-none">
+                                    <span className="text-[9px] uppercase font-black tracking-[0.2em] opacity-60 mb-1">
+                                        {cartCount} {cartCount === 1 ? 'Item' : 'Items'}
+                                    </span>
+                                    <span className="text-base font-bold tracking-tight">
+                                        ₹{cartTotal}
+                                    </span>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm font-black uppercase tracking-widest">Proceed</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            <div className="flex items-center gap-3 bg-black/5 px-4 py-2 rounded-2xl">
+                                <span className="text-[11px] font-black uppercase tracking-widest">Proceed</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                             </div>
                         </button>
                     </div>
