@@ -84,19 +84,28 @@ export const AdminPanel = (props: AdminPanelProps) => {
     };
 
     const downloadCSV = () => {
-        const headers = ["Order Ref", "Date", "Customer", "Phone", "Items", "Promo Code", "Subtotal", "Discount", "Total", "Payment"];
-        const rows = allOrders.map(o => [
-            o.id,
-            new Date(o.date).toLocaleDateString(),
-            o.customer.name,
-            o.customer.phone,
-            `"${o.items.map(i => `${i.name} (${i.qty_in_cart})`).join('; ')}"`,
-            o.appliedPromoCode || "None",
-            o.originalTotal || o.total,
-            o.discountAmount || 0,
-            o.total,
-            o.paymentMethod
-        ]);
+        const headers = ["Order Ref", "Date", "Customer", "Phone", "Item Name", "Item Qty", "Item Rate", "Item Total", "Order Subtotal", "Order Discount", "Order Total", "Promo Code", "Payment"];
+        const rows: any[] = [];
+        
+        allOrders.forEach(o => {
+            o.items.forEach(i => {
+                rows.push([
+                    o.id,
+                    new Date(o.date).toLocaleDateString(),
+                    o.customer.name,
+                    o.customer.phone,
+                    i.name,
+                    i.qty_in_cart,
+                    i.price || 0,
+                    (i.price || 0) * i.qty_in_cart,
+                    o.originalTotal || o.total,
+                    o.discountAmount || 0,
+                    o.total,
+                    o.appliedPromoCode || "None",
+                    o.paymentMethod
+                ]);
+            });
+        });
 
         const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -464,40 +473,42 @@ export const AdminPanel = (props: AdminPanelProps) => {
                             <table className="w-full text-left border-separate border-spacing-y-3">
                                 <thead className="hidden sm:table-header-group">
                                     <tr className="text-xs text-primary/40 uppercase tracking-[0.4em] font-black">
-                                        <th className="px-6 pb-4">Order ID</th>
-                                        <th className="px-6 pb-4">Date</th>
-                                        <th className="px-6 pb-4">Customer</th>
-                                        <th className="px-6 pb-4">Items</th>
-                                        <th className="px-6 pb-4 text-right">Total</th>
+                                        <th className="px-6 pb-4">ID / Date / Customer</th>
+                                        <th className="px-6 pb-4">Ordered Items Breakdown (Name, Qty, Rate, Net)</th>
+                                        <th className="px-6 pb-4 text-right">Order Summary</th>
                                         <th className="px-6 pb-4 text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {allOrders.map(o => (
                                         <tr key={o.id} className="bg-zinc-950/40 group hover:bg-zinc-950 transition-all duration-500">
-                                            <td className="px-6 py-6 rounded-l-[2rem] border-y border-l border-white/5 group-hover:border-primary/20 transition-all">
-                                                <div className="font-mono text-[10px] text-white font-black tracking-widest">{o.id}</div>
+                                            <td className="px-6 py-6 rounded-l-[2rem] border-y border-l border-white/5 group-hover:border-primary/20 transition-all space-y-2">
+                                                <div className="font-mono text-[9px] text-primary font-black tracking-widest">{o.id}</div>
+                                                <div className="text-[10px] text-zinc-500 font-bold uppercase">{new Date(o.date).toLocaleDateString()}</div>
+                                                <div className="pt-2 border-t border-white/5">
+                                                    <div className="text-xs font-black text-white">{o.customer.name}</div>
+                                                    <div className="text-[9px] text-zinc-600 font-bold">{o.customer.phone}</div>
+                                                </div>
                                             </td>
-                                            <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all">
-                                                <div className="text-[11px] text-zinc-400 font-bold uppercase">{new Date(o.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                                            </td>
-                                            <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all">
-                                                <div className="text-xs font-black text-white mb-1">{o.customer.name}</div>
-                                                <div className="text-[9px] text-zinc-600 tracking-widest font-bold uppercase">{o.customer.phone}</div>
-                                            </td>
-                                            <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all max-w-[250px]">
-                                                <div className="flex flex-wrap gap-1.5">
+                                            <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all min-w-[300px]">
+                                                <div className="space-y-2">
                                                     {o.items.map((item, idx) => (
-                                                        <div key={idx} className="bg-zinc-900 border border-white/5 px-2 py-1 rounded-lg text-[9px] flex items-center gap-2">
-                                                            <span className="text-zinc-500 font-bold">{item.qty_in_cart}x</span>
-                                                            <span className="text-white font-medium truncate max-w-[120px]">{item.name}</span>
+                                                        <div key={idx} className="grid grid-cols-12 gap-2 text-[10px] items-center py-2 border-b border-white/5 last:border-0">
+                                                            <div className="col-span-6 font-medium text-white truncate px-1">{item.name}</div>
+                                                            <div className="col-span-2 text-zinc-500 text-center">{item.qty_in_cart} Qty</div>
+                                                            <div className="col-span-2 text-zinc-500 text-right">₹{item.price}</div>
+                                                            <div className="col-span-2 font-bold text-luxury-gold text-right">₹{(item.price || 0) * item.qty_in_cart}</div>
                                                         </div>
                                                     ))}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-6 border-y border-white/5 group-hover:border-primary/20 transition-all text-right">
-                                                <div className="text-base font-bold text-luxury-gold tracking-tighter">₹{o.total}</div>
-                                                {o.appliedPromoCode && <div className="text-[8px] text-primary font-black uppercase tracking-widest mt-1 opacity-60">{o.appliedPromoCode}</div>}
+                                                <div className="space-y-1">
+                                                    <div className="text-[10px] text-zinc-600 font-black uppercase tracking-wider">Sub: ₹{o.originalTotal || o.total + (o.discountAmount || 0)}</div>
+                                                    {o.discountAmount > 0 && <div className="text-[10px] text-emerald-500 font-black uppercase tracking-wider">− ₹{o.discountAmount}</div>}
+                                                    <div className="text-xl font-bold text-luxury-gold tracking-tighter pt-1 border-t border-white/10 mt-1">₹{o.total}</div>
+                                                    {o.appliedPromoCode && <div className="text-[9px] text-primary font-black uppercase tracking-widest mt-1 opacity-60">Code: {o.appliedPromoCode}</div>}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-6 rounded-r-[2rem] border-y border-r border-white/5 group-hover:border-primary/20 transition-all text-center">
                                                 <span className={`inline-block text-[8px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border
